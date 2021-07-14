@@ -5,7 +5,6 @@
 
 namespace Schism::Renderer
 {
-
 	Texture::Texture()
 	{
 		glCreateTextures(GL_TEXTURE_2D, 1, &m_TextureID);
