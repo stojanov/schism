@@ -4,25 +4,32 @@
 #include <imgui.h>
 #include <backends/imgui_impl_glfw.h>
 #include <backends/imgui_impl_opengl3.h>
+#include <entt/entt.hpp>
+#include <glm.hpp>
 
+#include "schism/System/System.h"
 int main()
 {
+	Schism::Log::Init();
+
 	if (!glfwInit())
 	{
-		std::cerr << "Coudn't initialize glfw";
+		SC_CORE_CRITICAL("Cannot initialize glfw");
 	}
-	GLFWwindow* window = glfwCreateWindow(1000, 1000, "Yay", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(600, 600, "Yay", NULL, NULL);
 	if (!window)
 	{
-		std::cerr << "Error creating window\n";
+		SC_CORE_CRITICAL("Canoot create window");
 	}
 
 	glfwMakeContextCurrent(window);
 
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 	{
-		std::cerr << "Error creating context\n";
+		SC_CORE_CRITICAL("Canoot load glad");
 	}
+
+	SC_CORE_INFO("Successfully created window");
 
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO(); (void)io;
@@ -31,16 +38,20 @@ int main()
 	ImGui_ImplGlfw_InitForOpenGL(window, true);
 	ImGui_ImplOpenGL3_Init("#version 400");
 
+	glm::vec3 backgroundColor{ 1.f, 1.f, 1.f };
+
 	while (!glfwWindowShouldClose(window))
 	{
 		glfwPollEvents();
-		glClearColor(0, 0.f, 0.f, 1.f);
+		glClearColor(backgroundColor.r, backgroundColor.g, backgroundColor.b, 1.f);
+		glClear(GL_COLOR_BUFFER_BIT);
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
 
 		ImGui::Begin("Demo window");
 		ImGui::Button("Hello!");
+		ImGui::ColorEdit3("BG Color", (float*)&backgroundColor);
 		ImGui::End();
 
 		ImGui::Render();

@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.18)
 project(schism)
 
 option(GLFW_BUILD_DOCS OFF)
@@ -17,9 +17,9 @@ if (CMAKE_BUILD_TYPE STREQUAL "Debug")
     else()
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wpedantic")
     endif()
-    add_compile_definitions(PRISM_DEBUG)
+    add_compile_definitions(SC_DEBUG)
 else()
-    add_compile_definitions(PRISM_NODEBUG)
+    add_compile_definitions(SC_NODEBUG)
 endif()
 
 include_directories(
@@ -71,7 +71,15 @@ add_executable(${PROJECT_NAME}
                     ${IMGUI_GLFW_HEADERS}
                     ${PROJECT_CONFIGS} )
 
-
+target_precompile_headers(${PROJECT_NAME} INTERFACE 
+                        <string> 
+                        <vector> 
+                        <algorithm>
+                        <thread>
+                        <memory>
+                        <utility>
+                        <functional>
+                        )
 target_link_libraries(${PROJECT_NAME} glfw
                       ${GLFW_LIBRARIES} ${GLAD_LIBRARIES})
 
