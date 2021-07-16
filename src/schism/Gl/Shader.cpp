@@ -46,7 +46,7 @@ namespace Schism::Gl
 			glDeleteShader(m_FragmentShader);
 
 			SC_CORE_ERROR("{0}", infoLog.data());
-			SC_ASSERT(false, "Error linking program");
+			SC_CORE_TRACE("Error linking program");
 		}
 		
 		glDetachShader(m_Program, m_VertexShader);

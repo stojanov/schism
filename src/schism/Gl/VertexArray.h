@@ -37,7 +37,7 @@ namespace Schism::Gl
 
 		void Bind() const;
 		void Unbind() const;
-
+		
 		void AddVertexBuffer(const Ref<VertexBuffer>& buf);
 		void SetIndexBuffer(const Ref<IndexBuffer>& buffer);
 	private:

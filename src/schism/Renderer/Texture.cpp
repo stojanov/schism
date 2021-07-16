@@ -25,16 +25,23 @@ namespace Schism::Renderer
 		{
 			SC_CORE_CRITICAL("No texture data found :{0}", path);
 			SC_CORE_TRACE("No texture data found");
+			return;
 		}
 
-		if (m_ChannelCount == 3) m_Format = GL_RGB;
-		if (m_ChannelCount == 4) m_Format = GL_RGBA;
+		if (m_ChannelCount == 3)
+		{
+			m_Format = GL_RGB;
+		}
+		if (m_ChannelCount == 4)
+		{
+			m_Format = GL_RGBA;
+		}
 
 		glCreateTextures(GL_TEXTURE_2D, 1, &m_TextureID);
 		glBindTexture(GL_TEXTURE_2D, m_TextureID);
 
 		glTextureParameteri(m_TextureID, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTextureParameteri(m_TextureID, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTextureParameteri(m_TextureID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 		glTextureParameteri(m_TextureID, GL_TEXTURE_WRAP_S, GL_REPEAT);
 		glTextureParameteri(m_TextureID, GL_TEXTURE_WRAP_T, GL_REPEAT);
