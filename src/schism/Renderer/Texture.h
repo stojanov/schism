@@ -19,10 +19,11 @@ namespace Schism::Renderer
 		static Ref<Texture> CreateRef(const std::string& path, bool flip = true);
 		void Bind(uint8_t slot);
 
-		int GetWidth() { return m_Width; }
-		int GetHeight() { return m_Height; }
-		const glm::vec2& GetSize() { return { m_Width, m_Height }; }
-
+		GLenum GetFormat() const { return m_Format; }
+		int GetWidth() const { return m_Width; }
+		int GetHeight() const { return m_Height; }
+		const glm::vec2& GetSize() const { return { m_Width, m_Height }; }
+	private:
 		static int GetTexSlot(uint8_t slot)
 		{
 			static constexpr int slots[] = {
@@ -64,7 +65,7 @@ namespace Schism::Renderer
 
 			return slots[slot];
 		}
-	private:
+		
 		GLenum m_Format;
 		unsigned m_TextureID;
 		int m_Width;
