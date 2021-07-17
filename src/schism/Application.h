@@ -3,7 +3,7 @@
 
 namespace Schism {
 	
-	class __declspec(dllexport) Application
+	class Application
 	{
 	public:
 		Application();
