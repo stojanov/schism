@@ -2,7 +2,7 @@
 
 namespace Schism
 {
-	Application::Application()
+	Application::Application(int w, int h, const char* name)
 	{
 
 	}

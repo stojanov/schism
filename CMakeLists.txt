@@ -69,7 +69,7 @@ add_executable(${PROJECT_NAME}
                     ${IMGUI_HEADERS}
                     ${HEADERS} 
                     ${IMGUI_GLFW_HEADERS}
-                    ${PROJECT_CONFIGS} )
+                    ${PROJECT_CONFIGS})
 
 target_precompile_headers(${PROJECT_NAME} INTERFACE 
                         <string> 

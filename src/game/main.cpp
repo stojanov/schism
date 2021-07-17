@@ -1,25 +1,8 @@
-#include "Schism.h"
-#include "schism/System/Ptr.h"
-
-class Sandbox : public Schism::Application
-{
-public:
-	Sandbox()
-	{
-		
-	}
-	~Sandbox()
-	{
-	}
-};
+#include "schism/Schism.h"
 
 int main()
-{ 
-	auto app = Schism::CreateApplication();
-	app->Run();
-}
-
-std::unique_ptr<Schism::Application> Schism::CreateApplication()
 {
-	return MakePtr<Sandbox>();
+	Schism::Sandbox App;
+
+	App.Run();
 }
