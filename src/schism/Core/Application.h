@@ -1,4 +1,6 @@
 #pragma once
+#include "SharedContext.h"
+#include "schism/Core/Events/Event.h"
 
 namespace Schism {
 	
@@ -9,6 +11,9 @@ namespace Schism {
 		virtual ~Application();
 
 		void Run();
+	private:
+		void OnEvent(Event& e);
 	protected:
+		Core::SharedContextRef m_Ctx;
 	};
 }
