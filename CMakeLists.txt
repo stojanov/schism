@@ -70,7 +70,7 @@ add_executable(${PROJECT_NAME}
                     ${IMGUI_HEADERS}
                     ${HEADERS} 
                     ${IMGUI_GLFW_HEADERS}
-                    ${PROJECT_CONFIGS} )
+                    ${PROJECT_CONFIGS})
 
 target_link_libraries(${PROJECT_NAME} glfw
                       ${GLFW_LIBRARIES} ${GLAD_LIBRARIES})
