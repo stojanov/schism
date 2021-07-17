@@ -2,7 +2,7 @@
 
 #ifdef SCHISM_PLATFORM_WINDOWS
 
-extern Schism::Application* Schism::CreateApplication();
+extern std::unique_ptr<Schism::Application> Schism::CreateApplication();
 
 int main(int argc, char** argv)
 {

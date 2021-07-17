@@ -1,4 +1,5 @@
 #include "Schism.h"
+#include "schism/System/Ptr.h"
 
 class Sandbox : public Schism::Application
 {
@@ -16,10 +17,9 @@ int main()
 { 
 	auto app = Schism::CreateApplication();
 	app->Run();
-	delete app;
 }
 
-Schism::Application* Schism::CreateApplication()
+std::unique_ptr<Schism::Application> Schism::CreateApplication()
 {
-	return new Sandbox();
+	return MakePtr<Sandbox>();
 }

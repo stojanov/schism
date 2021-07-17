@@ -1,6 +1,5 @@
 #pragma once
-
-#include "Core.h"
+#include <memory>
 
 namespace Schism {
 	
@@ -14,5 +13,5 @@ namespace Schism {
 	};
 
 	// To be defined in CLIENT
-	Application* CreateApplication();
+	std::unique_ptr<Application> CreateApplication();
 }
