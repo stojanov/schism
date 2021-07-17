@@ -23,7 +23,7 @@ namespace Schism::Gl
 		static Ptr<VertexBuffer> CreatePtr(float* vertices, size_t size, const BufferLayout& layout, bool dynamic = true);
 		static Ptr<VertexBuffer> CreatePtr(std::vector<float>& vertices, const BufferLayout& layout, bool dynamic = true);
 		
-		const BufferLayout& GetLayout() { return m_Layout; };
+		const BufferLayout& GetLayout() const { return m_Layout; };
 
 		void SetData(float* vertices, size_t size);
 		void UpdateSubData(float* vertices, size_t size);

@@ -14,6 +14,14 @@ namespace Schism::Gl
 
 	void VertexArray::Bind() const
 	{
+		if (m_IndexBuffer)
+		{
+			m_IndexBuffer->Bind();
+		}
+		if (m_VertexBuffer)
+		{
+			m_VertexBuffer->Bind();
+		}
 		glBindVertexArray(m_ID);
 	}
 

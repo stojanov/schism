@@ -47,6 +47,7 @@ file(GLOB IMGUI_GLFW_SOURCES
 
 file(GLOB_RECURSE SOURCES src/*.cpp)
 file(GLOB_RECURSE HEADERS src/*.h)
+file(GLOB_RECURSE RESOURCES res/*)
 
 source_group("Headers" FILES ${HEADERS})
 source_group("Sources" FILES ${SOURCES})
@@ -71,15 +72,6 @@ add_executable(${PROJECT_NAME}
                     ${IMGUI_GLFW_HEADERS}
                     ${PROJECT_CONFIGS})
 
-target_precompile_headers(${PROJECT_NAME} INTERFACE 
-                        <string> 
-                        <vector> 
-                        <algorithm>
-                        <thread>
-                        <memory>
-                        <utility>
-                        <functional>
-                        )
 target_link_libraries(${PROJECT_NAME} glfw
                       ${GLFW_LIBRARIES} ${GLAD_LIBRARIES})
 
@@ -94,3 +86,8 @@ target_link_libraries(${PROJECT_NAME} glfw
               
 set_target_properties(${PROJECT_NAME} PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${PROJECT_NAME})
+
+add_custom_command(
+    TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/res $<TARGET_FILE_DIR:${PROJECT_NAME}>/res
+    DEPENDS ${RESOURCES})
