@@ -72,8 +72,6 @@ namespace Schism::Core
 		glfwSwapBuffers(m_WindowPtr);
 	}
 
-
-
 	void Window::HookGLFWEventFunctions()
 	{
 		HookMouseEvents();

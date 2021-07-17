@@ -2,6 +2,7 @@
 
 int main()
 {
+	Schism::Init();
 	Schism::Sandbox App;
 
 	App.Run();
