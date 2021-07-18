@@ -7,7 +7,8 @@
 namespace Schism
 {
 	OrthographicCamera::OrthographicCamera(float left, float right, float bot, float top)
-		: m_ProjectionMatrix(glm::ortho(left, right, bot, top, -1.0f, 1.0f)), m_ViewMatrix(1.0f)
+		: m_ProjectionMatrix(glm::ortho(left, right, bot, top, -1.0f, 1.0f)),
+		m_ViewMatrix(1.0f)
 	{
 		m_ViewProjectionMatrix = m_ProjectionMatrix * m_ViewMatrix;
 	}
