@@ -31,7 +31,7 @@ include_directories(
                     vendor/entt/src
                     vendor/stb/
                     vendor/json/include/
-                    vendor/pmap/parallel_hashmap/
+                    vendor/phmap/parallel_hashmap/
                     src/)
 
 file(GLOB STB_SRC vendor/stb/*.c)

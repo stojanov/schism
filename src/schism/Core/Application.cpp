@@ -21,6 +21,15 @@ namespace Schism
 			});
 		m_Ctx = CreateSharedContext(Window);
 
+		m_Ctx->SceneManager.Switch = [this](const std::string& name)
+			{
+				m_SceneManager.Switch(name);
+			};
+		m_Ctx->SceneManager.Destroy = [this](const std::string& name)
+			{
+				m_SceneManager.Destroy(name);
+			};
+		
 		SC_CORE_INFO("Schism succesfully initialized");
 		SC_CORE_INFO("Gpu - {0} {1}", glGetString(GL_VENDOR), glGetString(GL_RENDERER));
 		SC_CORE_INFO("Driver - {0}", glGetString(GL_VERSION));
@@ -29,10 +38,12 @@ namespace Schism
 
 	Application::~Application()
 	{
+		
 	}
 
 	void Application::OnEvent(Event& e)
 	{
+		m_SceneManager.OnSystemEvent(e);
 	}
 	
 	void Application::Run()
@@ -40,9 +51,26 @@ namespace Schism
 		// Boilerplate code
 		auto winPtr = m_Ctx->Window->GetNativeWindow();
 
+		
+		auto StartTime = std::chrono::high_resolution_clock::now();
+		auto LastFrameTime = StartTime;
+
+		Timestep ts;
 		while (!glfwWindowShouldClose(winPtr))
 		{
+			StartTime = std::chrono::high_resolution_clock::now();
+			auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(StartTime - LastFrameTime).count();
+			LastFrameTime = StartTime;
+			ts = ms * 1.f / 1000;
+
+			/*
+			 * TODO: Add a clear window/context method
+			 */
+			
+			
 			m_Ctx->Window->ProcessEvents();
+			m_SceneManager.OnUpdate(ts);
+			m_SceneManager.OnDraw();
 			m_Ctx->Window->Swap();
 		}
 

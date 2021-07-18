@@ -1,4 +1,5 @@
 #pragma once
+#include "SceneManager.h"
 #include "SharedContext.h"
 #include "schism/Core/Events/Event.h"
 
@@ -15,5 +16,6 @@ namespace Schism {
 		void OnEvent(Event& e);
 	protected:
 		Core::SharedContextRef m_Ctx;
+		Core::SceneManager m_SceneManager;
 	};
 }
