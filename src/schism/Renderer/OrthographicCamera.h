@@ -1,9 +1,10 @@
 #pragma once
 #include <glm.hpp>
+#include "schism/Interfaces/ICamera.h"
 
 namespace Schism
 {
-	class OrthographicCamera
+	class OrthographicCamera : ICamera
 	{
 	public:
 		OrthographicCamera(float left, float right, float bot, float top);
