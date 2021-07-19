@@ -12,9 +12,12 @@ namespace Schism::Renderer
 	class SpriteRenderer
 	{
 	public:
+		SpriteRenderer();
 		SpriteRenderer(Resources::ShaderHandle shader);
 
-		void Draw(Components::Transform2D& transform, Components::Sprite& sprite, glm::mat4& proj);
+		void RegisterShader(Resources::ShaderHandle shader);
+		
+		void Draw(Components::Transform2D& transform, Components::Sprite& sprite, const glm::mat4& proj);
 	private:
 		Ref<Gl::VertexBuffer> m_VertBuff;
 		Gl::VertexArray m_VertexArray; 

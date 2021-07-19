@@ -15,20 +15,24 @@ namespace Schism::Core
 		SceneManager();
 		SceneManager(SharedContextRef ctx);
 
+		void InitContext(SharedContextRef ctx);
+		
 		template<typename T, typename = std::enable_if_t<std::is_base_of_v<IScene, T>>>
 		void Register(const std::string& name)
 		{
-			if (auto i = m_Scenes.find(name); i == m_Scenes.end())
+			if (auto i = m_Scenes.find(name); i != m_Scenes.end())
 			{
-				SC_CORE_TRACE("Cannot find scene: {0}", name);
+				SC_CORE_TRACE("Scene already registered: {0}", name);
 				return;
 			}
-
+			
 			Ref<IScene> Scene = MakeRef<T>(m_Ctx, name);
 			Scene->OnAttach();
 			m_Scenes[name] = Scene;
 
-			if (m_Scenes.size() == 0)
+			SC_CORE_INFO("Registered Scene {0}", name);
+			
+			if (!m_ActiveScene)
 			{
 				m_ActiveScene = Scene;
 			}
