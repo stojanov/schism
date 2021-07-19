@@ -3,7 +3,6 @@
 #include <ext/matrix_clip_space.hpp>
 #include <ext/matrix_transform.hpp>
 
-
 namespace Schism::Renderer
 {
 	OrthographicCamera::OrthographicCamera(float left, float right, float bot, float top)

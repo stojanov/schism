@@ -2,7 +2,9 @@
 
 #include "Window.h"
 #include "GLFW/glfw3.h"
+#include "schism/Renderer/RenderAPI.h"
 #include "schism/System/System.h"
+#include "schism/Core/Events/WindowEvents.h"
 
 namespace Schism
 {
@@ -13,7 +15,7 @@ namespace Schism
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 		Ref<Core::Window> Window = MakeRef<Core::Window>();
-
+		
 		Window->Create(w, h, name);
 		Window->SetEventCallback([this](Event& e)
 			{
@@ -31,14 +33,12 @@ namespace Schism
 			};
 
 		m_SceneManager.InitContext(m_Ctx);
+		Renderer::API::Init();
 		
 		SC_CORE_INFO("Schism succesfully initialized");
 		SC_CORE_INFO("Gpu - {0} {1}", glGetString(GL_VENDOR), glGetString(GL_RENDERER));
 		SC_CORE_INFO("Driver - {0}", glGetString(GL_VERSION));
 		SC_CORE_INFO("Shader Version - {0}", glGetString(GL_SHADING_LANGUAGE_VERSION));
-
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	}
 
 	Application::~Application()
@@ -48,6 +48,13 @@ namespace Schism
 
 	void Application::OnEvent(Event& e)
 	{
+		EventHandler evt(e);
+
+		CLASSEVENT(evt, WindowResizeEvent)
+		{
+			Renderer::API::SetViewport(e.GetWidth(), e.GetHeight());
+		});
+		
 		m_SceneManager.OnSystemEvent(e);
 	}
 	
@@ -58,7 +65,7 @@ namespace Schism
 		
 		auto StartTime = std::chrono::high_resolution_clock::now();
 		auto LastFrameTime = StartTime;
-
+		
 		Timestep ts;
 		while (!glfwWindowShouldClose(winPtr))
 		{
@@ -67,10 +74,7 @@ namespace Schism
 			LastFrameTime = StartTime;
 			ts = ms * 1.f / 1000;
 
-			/*
-			 * TODO: Add a clear window/context method
-			 */
-			
+			Renderer::API::Clear();
 			m_Ctx->Window->ProcessEvents();
 			m_SceneManager.OnUpdate(ts);
 			m_SceneManager.OnDraw();
