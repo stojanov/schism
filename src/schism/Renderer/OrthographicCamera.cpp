@@ -4,7 +4,7 @@
 #include <ext/matrix_transform.hpp>
 
 
-namespace Schism
+namespace Schism::Renderer
 {
 	OrthographicCamera::OrthographicCamera(float left, float right, float bot, float top)
 		: m_ProjectionMatrix(glm::ortho(left, right, bot, top, -1.0f, 1.0f)),

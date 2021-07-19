@@ -29,6 +29,8 @@ namespace Schism
 			{
 				m_SceneManager.Destroy(name);
 			};
+
+		m_SceneManager.InitContext(m_Ctx);
 		
 		SC_CORE_INFO("Schism succesfully initialized");
 		SC_CORE_INFO("Gpu - {0} {1}", glGetString(GL_VENDOR), glGetString(GL_RENDERER));
@@ -50,7 +52,6 @@ namespace Schism
 	{
 		// Boilerplate code
 		auto winPtr = m_Ctx->Window->GetNativeWindow();
-
 		
 		auto StartTime = std::chrono::high_resolution_clock::now();
 		auto LastFrameTime = StartTime;
@@ -66,7 +67,6 @@ namespace Schism
 			/*
 			 * TODO: Add a clear window/context method
 			 */
-			
 			
 			m_Ctx->Window->ProcessEvents();
 			m_SceneManager.OnUpdate(ts);

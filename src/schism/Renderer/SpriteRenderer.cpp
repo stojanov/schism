@@ -4,6 +4,18 @@
 
 namespace Schism::Renderer
 {
+	SpriteRenderer::SpriteRenderer()
+	{
+		m_VertBuff = Gl::VertexBuffer::CreateRef({ {
+			{ Gl::ShaderDataType::Float2, "position" },
+			{ Gl::ShaderDataType::Float2, "texcord" },
+		}});
+
+		m_VertBuff->SetData((float*)vertices, sizeof(vertices));
+
+		m_VertexArray.AddVertexBuffer(m_VertBuff);
+	}
+	
 	SpriteRenderer::SpriteRenderer(Resources::ShaderHandle shader)
 		:
 		m_Shader(shader)
@@ -18,7 +30,12 @@ namespace Schism::Renderer
 		m_VertexArray.AddVertexBuffer(m_VertBuff);
 	}
 
-	void SpriteRenderer::Draw(Components::Transform2D& transformComponent, Components::Sprite& spriteComponent, glm::mat4& proj)
+	void SpriteRenderer::RegisterShader(Resources::ShaderHandle shader)
+	{
+		m_Shader = shader;
+	}
+
+	void SpriteRenderer::Draw(Components::Transform2D& transformComponent, Components::Sprite& spriteComponent, const glm::mat4& proj)
 	{
 		glm::mat4 transform = glm::translate(glm::mat4(1.f), glm::vec3(transformComponent.position, 0.f));
 		transform = glm::translate(transform, glm::vec3(0.5f * transformComponent.scale.x, 0.5f * transformComponent.scale.y, 0.0f));

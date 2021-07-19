@@ -10,6 +10,11 @@ namespace Schism::Core
 	{
 	}
 
+	void SceneManager::InitContext(SharedContextRef ctx)
+	{
+		m_Ctx = ctx;
+	}
+
 	void SceneManager::Switch(const std::string& name)
 	{
 		if (auto i = m_Scenes.find(name); i != m_Scenes.end())

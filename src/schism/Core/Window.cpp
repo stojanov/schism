@@ -66,7 +66,7 @@ namespace Schism::Core
 	{
 		m_Data.OnEvent = callback;
 	}
-
+	
 	void Window::Swap() const
 	{
 		glfwSwapBuffers(m_WindowPtr);
