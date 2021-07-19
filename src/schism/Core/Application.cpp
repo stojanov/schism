@@ -67,10 +67,8 @@ namespace Schism
 			LastFrameTime = StartTime;
 			ts = ms * 1.f / 1000;
 
-			/*
-			 * TODO: Add a clear window/context method
-			 */
 			
+			m_Ctx->Window->Clear();
 			m_Ctx->Window->ProcessEvents();
 			m_SceneManager.OnUpdate(ts);
 			m_SceneManager.OnDraw();
