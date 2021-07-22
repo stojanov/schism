@@ -48,8 +48,6 @@ void SampleScene::OnSystemEvent(Event& e)
 
 void SampleScene::OnUpdate(Timestep ts)
 {
-	auto& transform = m_Registry.get<Components::Transform2D>(m_Ship1);
-	transform.position.x += 0.1;
 }
 
 void SampleScene::OnDraw()
