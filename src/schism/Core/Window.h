@@ -13,7 +13,6 @@ namespace Schism::Core
 		int GetWidth() const { return m_Data.Width; }
 		int GetHeight() const { return m_Data.Height; }
 
-
 		void Swap() const;
 		void Create(int w, int h, const char* name);
 		void ProcessEvents();
