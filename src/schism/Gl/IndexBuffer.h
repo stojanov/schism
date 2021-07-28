@@ -16,10 +16,8 @@ namespace Schism::Gl
 		
 		virtual ~IndexBuffer();
 		
-		static Ref<IndexBuffer> CreateRef(uint32_t* indices, uint32_t count);
-		static Ptr<IndexBuffer> CreatePtr(uint32_t* indices, uint32_t count);
-		static Ref<IndexBuffer> CreateRef();
-		static Ptr<IndexBuffer> CreatePtr();
+		static Ref<IndexBuffer> Create(uint32_t* indices, uint32_t count);
+		static Ref<IndexBuffer> Create();
 
 		void SetData(uint32_t* indices, uint32_t count) const;
 		void SetData(std::vector<uint32_t>& indices, uint32_t count) const;

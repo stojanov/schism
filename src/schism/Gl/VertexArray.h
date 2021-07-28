@@ -11,22 +11,27 @@ namespace Schism::Gl
 {
 	static GLenum OpenGLBaseType(ShaderDataType type)
 	{
-		switch (type)
-		{
-			case ShaderDataType::Float:    return GL_FLOAT;
-			case ShaderDataType::Float2:   return GL_FLOAT;
-			case ShaderDataType::Float3:   return GL_FLOAT;
-			case ShaderDataType::Float4:   return GL_FLOAT;
-			case ShaderDataType::Mat3:     return GL_FLOAT;
-			case ShaderDataType::Mat4:     return GL_FLOAT;
-			case ShaderDataType::Int:      return GL_INT;
-			case ShaderDataType::Int2:     return GL_INT;
-			case ShaderDataType::Int3:     return GL_INT;
-			case ShaderDataType::Int4:     return GL_INT;
-			case ShaderDataType::Bool:     return GL_BOOL;
-		}
+		static constexpr GLenum glDataType[] = {
+			0,			//  None = 0,
+			GL_INT,		//	Int,
+			GL_INT,		//	Int2,
+			GL_INT,		//	Int3,
+			GL_INT,		//	Int4,
+			GL_FLOAT,	//	Float,
+			GL_FLOAT,	//	Float2,
+			GL_FLOAT,	//	Float3,
+			GL_FLOAT,	//	Float4,
+			GL_FLOAT,	//	Mat3, 3 * float3
+			GL_FLOAT,	//	Mat4, 4 * float4
+			GL_BOOL,	//	Bool
+		};
 
-		SC_ASSERT(false, "Invalid shader data type")
+		if (type == ShaderDataType::None)
+		{
+			SC_CORE_TRACE("Invalid shader data type");
+		}
+		
+		return glDataType[static_cast<int>(type)];
 	}
 
 	class VertexArray
@@ -35,6 +40,8 @@ namespace Schism::Gl
 		VertexArray();
 		~VertexArray();
 
+		static Ref<VertexArray> Create();
+		
 		void Bind() const;
 		void Unbind() const;
 		

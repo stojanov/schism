@@ -5,6 +5,7 @@
 #include "schism/Renderer/RenderAPI.h"
 #include "schism/System/System.h"
 #include "schism/Core/Events/WindowEvents.h"
+#include "schism/Renderer/Renderer2D.h"
 
 namespace Schism
 {
@@ -33,6 +34,7 @@ namespace Schism
 			};
 
 		m_SceneManager.InitContext(m_Ctx);
+		
 		Renderer::API::Init();
 		
 		SC_CORE_INFO("Schism succesfully initialized");
@@ -43,7 +45,7 @@ namespace Schism
 
 	Application::~Application()
 	{
-		
+		Renderer::API::Shutdown();
 	}
 
 	void Application::OnEvent(Event& e)

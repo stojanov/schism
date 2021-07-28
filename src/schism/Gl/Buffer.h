@@ -25,23 +25,27 @@ namespace Schism::Gl
 
 	static uint32_t ShaderDataTypeSize(ShaderDataType type)
 	{
-		switch (type)
+		static constexpr uint8_t dataTypeSize[] = {
+			0,			//  None = 0,
+			4,			//	Int,
+			4 * 2,		//	Int2,
+			4 * 3,		//	Int3,
+			4 * 4,		//	Int4,
+			4,			//	Float,
+			4 * 2,		//	Float2,
+			4 * 3,		//	Float3,
+			4 * 4,		//	Float4,
+			4 * 3 * 3,	//	Mat3, 3 * float3
+			4 * 4 * 4,	//	Mat4, 4 * float4
+			1,			//	Bool
+		};
+		
+		if (type == ShaderDataType::None)
 		{
-		case ShaderDataType::Int:		return 4;
-		case ShaderDataType::Int2:		return 4 * 2;
-		case ShaderDataType::Int3:		return 4 * 3;
-		case ShaderDataType::Int4:		return 4 * 4;
-		case ShaderDataType::Float:		return 4;
-		case ShaderDataType::Float2:	return 4 * 2;
-		case ShaderDataType::Float3:	return 4 * 3;
-		case ShaderDataType::Float4:	return 4 * 4;
-		case ShaderDataType::Mat3:		return 4 * 3 * 3;
-		case ShaderDataType::Mat4:		return 4 * 4 * 4;
-		case ShaderDataType::Bool:		return 1;
+			SC_CORE_ERROR("Invalid ShaderDataType!");
 		}
-
-		//TRACE("Invalid ShaderDataType!");
-		return 0;
+		
+		return dataTypeSize[static_cast<int>(type)];
 	};
 	
 	struct BufferElement
@@ -59,23 +63,29 @@ namespace Schism::Gl
 		{
 		}
 
-		uint32_t GetComponentCount() const
+		uint8_t GetComponentCount() const
 		{
-			switch (Type)
-			{
-			case ShaderDataType::Float:   return 1;
-			case ShaderDataType::Float2:  return 2;
-			case ShaderDataType::Float3:  return 3;
-			case ShaderDataType::Float4:  return 4;
-			case ShaderDataType::Int:     return 1;
-			case ShaderDataType::Int2:    return 2;
-			case ShaderDataType::Int3:    return 3;
-			case ShaderDataType::Int4:    return 4;
-			case ShaderDataType::Bool:    return 1;
-			}
+			static constexpr uint8_t componentCount[] = {
+				0, //	None = 0,
+				1, //	Int,
+				2, //	Int2,
+				3, //	Int3,
+				4, //	Int4,
+				1, //	Float,
+				2, //	Float2,
+				3, //	Float3,
+				4, //	Float4,
+				3, //	Mat3, 3 * float3
+				4, //	Mat4, 4 * float4
+				1, //	Bool
+			};
 
-			SC_CORE_TRACE("Invalid ShaderDataType!");
-			return 0;
+			if (Type == ShaderDataType::None)
+			{
+				SC_CORE_ERROR("Invalid ShaderDataType!");
+			}
+			
+			return componentCount[static_cast<int>(Type)];
 		}
 	};
 
