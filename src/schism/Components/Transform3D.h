@@ -3,7 +3,7 @@
 
 namespace Schism::Components
 {
-	struct Transform2D
+	struct Transform3D
 	{
 		glm::vec3 position;
 		glm::vec3 scale;
