@@ -8,6 +8,7 @@ option(GLFW_BUILD_TESTS OFF)
 add_subdirectory(vendor/GLFW)
 add_subdirectory(vendor/spdlog)
 add_subdirectory(vendor/entt)
+add_subdirectory(vendor/freetype)
 
 set(CMAKE_CXX_STANDARD 17)
 
@@ -32,6 +33,7 @@ include_directories(
                     vendor/stb/
                     vendor/json/include/
                     vendor/phmap/parallel_hashmap/
+                    vendor/freetype/include
                     src/)
 
 file(GLOB STB_SRC vendor/stb/*.c)
@@ -44,6 +46,7 @@ file(GLOB IMGUI_GLFW_HEADERS
 file(GLOB IMGUI_GLFW_SOURCES 
                     vendor/imgui/backends/imgui_impl_opengl3.cpp
                     vendor/imgui/backends/imgui_impl_glfw.cpp)
+file(GLOB FT_SRC vendor/freetype/src)
 
 file(GLOB_RECURSE SOURCES src/*.cpp)
 file(GLOB_RECURSE HEADERS src/*.h)
@@ -70,6 +73,7 @@ add_executable(${PROJECT_NAME}
                     ${IMGUI_HEADERS}
                     ${HEADERS} 
                     ${IMGUI_GLFW_HEADERS}
+                    ${FT_SRC}
                     ${PROJECT_CONFIGS})
 
 target_link_libraries(${PROJECT_NAME} glfw
