@@ -4,8 +4,10 @@
 
 #include "AssetManager.h"
 #include "schism/Gl/Shader.h"
+#include "schism/Renderer/Font.h"
 #include "schism/Renderer/Texture.h"
 #include "schism/System/FileIO.h"
+#include "schism/Renderer/FontLoader.h"
 
 namespace Schism::Core
 {
@@ -28,10 +30,19 @@ namespace Schism::Core
 		}
 	};
 
+	struct FontLoader: entt::resource_loader<FontLoader, Gl::Shader>
+	{
+		Ref<Renderer::Font> static load(const std::string& path)
+		{
+			return Renderer::Font::Create(path);
+		}
+	};
+	
 	struct Assets
 	{
 		AssetManager<Renderer::Texture, TextureLoader> Textures;
 		AssetManager<Gl::Shader, ShaderLoader> Shaders;
+		AssetManager<Renderer::Font, FontLoader> Fonts;
 	};
 	
 }
