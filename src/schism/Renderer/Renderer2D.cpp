@@ -86,9 +86,9 @@ namespace Schism
 
 			offset += 4;
 		}
-		delete[] indices;
-
 		s_RenderData.IndexBuff->SetData(indices, Render2DData::MaxIndices);
+
+		delete[] indices;
 	}
 
 	void Renderer2D::Shutdown()
