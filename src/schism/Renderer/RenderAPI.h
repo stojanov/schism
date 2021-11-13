@@ -1,7 +1,7 @@
 #pragma once
 #include <cstdint>
 
-#include "vec4.hpp"
+#include <vec4.hpp>
 
 namespace Schism::Renderer
 {
@@ -14,7 +14,5 @@ namespace Schism::Renderer
 		static void SetClearColor(const glm::vec4& color);
 		static void SetViewport(uint32_t width, uint32_t height);
 		static void Clear();
-
-		// TODO: Add drawing functionality 
 	};
 }

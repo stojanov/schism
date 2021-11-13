@@ -23,7 +23,18 @@ namespace Schism::Renderer
 		int GetWidth() const { return m_Width; }
 		int GetHeight() const { return m_Height; }
 		const glm::vec2& GetSize() const { return { m_Width, m_Height }; }
-	private:
+
+		bool operator==(Texture& other) const
+		{
+			return
+				other.m_TextureID == m_TextureID &&
+				other.path == path &&
+				other.m_ChannelCount == m_ChannelCount &&
+				other.m_Width == m_Width &&
+				other.m_Height == m_Height &&
+				other.m_Format == m_Format;
+		}
+		
 		static int GetTexSlot(uint8_t slot)
 		{
 			static constexpr int slots[] = {
@@ -65,7 +76,8 @@ namespace Schism::Renderer
 
 			return slots[slot];
 		}
-		
+	private:
+		std::string path; 
 		GLenum m_Format;
 		unsigned m_TextureID;
 		int m_Width;

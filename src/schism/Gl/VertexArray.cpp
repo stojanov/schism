@@ -12,6 +12,11 @@ namespace Schism::Gl
 		glDeleteVertexArrays(1, &m_ID);
 	}
 
+	Ref<VertexArray> VertexArray::Create()
+	{
+		return MakeRef<VertexArray>();
+	}
+	
 	void VertexArray::Bind() const
 	{
 		if (m_IndexBuffer)
@@ -32,7 +37,7 @@ namespace Schism::Gl
 
 	void VertexArray::AddVertexBuffer(const Ref<VertexBuffer>& buffer)
 	{
-		auto layout = buffer->GetLayout();
+		const auto& layout = buffer->GetLayout();
 		SC_ASSERT(layout.GetElements().size(), "VertexBuffer with no layout");
 		
 		Bind();

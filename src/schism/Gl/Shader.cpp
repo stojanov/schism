@@ -3,6 +3,8 @@
 #include <gtc/type_ptr.hpp>
 #include <iostream>
 
+#include "schism/System/FileIO.h"
+
 namespace Schism::Gl
 {
 	Shader::Shader()
@@ -12,6 +14,19 @@ namespace Schism::Gl
 	Shader::Shader(const std::string& vert, const std::string& frag)
 	{
 		Compile(vert, frag);
+	}
+
+	Ref<Shader> Shader::Create()
+	{
+		return MakeRef<Shader>();
+	}
+
+	Ref<Shader> Shader::Create(const std::string& vert, const std::string& frag)
+	{
+		auto vertCode = System::ReadFile(vert);
+		auto fragCode = System::ReadFile(frag);
+
+		return MakeRef<Shader>(vertCode, fragCode);
 	}
 
 	Shader::~Shader()

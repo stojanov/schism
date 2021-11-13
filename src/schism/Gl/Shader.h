@@ -14,6 +14,9 @@ namespace Schism::Gl
 	public:
 		Shader();
 		Shader(const std::string& vert, const std::string& frag);
+
+		static Ref<Shader> Create();
+		static Ref<Shader> Create(const std::string& vert, const std::string& frag);
 		
 		virtual ~Shader();
 		

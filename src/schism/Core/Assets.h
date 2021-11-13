@@ -20,11 +20,8 @@ namespace Schism::Core
 	struct ShaderLoader: entt::resource_loader<ShaderLoader, Gl::Shader>
 	{
 		Ref<Gl::Shader> static load(const std::string& vertPath, const std::string& fragPath)
-		{
-			const std::string vertexData = System::ReadFile(vertPath);
-			const std::string fragmentData = System::ReadFile(fragPath);
-			 
-			return MakeRef<Gl::Shader>(vertexData, fragmentData);
+		{	 
+			return Gl::Shader::Create(vertPath, fragPath);
 		}
 	};
 

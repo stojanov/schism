@@ -6,7 +6,7 @@ namespace Schism::Renderer
 {
 	SpriteRenderer::SpriteRenderer()
 	{
-		m_VertBuff = Gl::VertexBuffer::CreateRef({ {
+		m_VertBuff = Gl::VertexBuffer::Create({ {
 			{ Gl::ShaderDataType::Float2, "position" },
 			{ Gl::ShaderDataType::Float2, "texcord" },
 		}});
@@ -20,7 +20,7 @@ namespace Schism::Renderer
 		:
 		m_Shader(shader)
 	{
-		m_VertBuff = Gl::VertexBuffer::CreateRef({ {
+		m_VertBuff = Gl::VertexBuffer::Create({ {
 			{ Gl::ShaderDataType::Float2, "position" },
 			{ Gl::ShaderDataType::Float2, "texcord" },
 		}});

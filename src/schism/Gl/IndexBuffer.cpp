@@ -27,24 +27,14 @@ namespace Schism::Gl
 		glDeleteBuffers(1, &m_BufferID);
 	}
 
-	Ptr<IndexBuffer> IndexBuffer::CreatePtr(uint32_t* indices, uint32_t count)
-	{
-		return MakePtr<IndexBuffer>(indices, count);
-	}
-
-	Ref<IndexBuffer> IndexBuffer::CreateRef(uint32_t* indices, uint32_t count)
+	Ref<IndexBuffer> IndexBuffer::Create(uint32_t* indices, uint32_t count)
 	{
 		return MakeRef<IndexBuffer>(indices, count);
 	}
 
-	Ref<IndexBuffer> IndexBuffer::CreateRef()
+	Ref<IndexBuffer> IndexBuffer::Create()
 	{
 		return MakeRef<IndexBuffer>();
-	}
-
-	Ptr<IndexBuffer> IndexBuffer::CreatePtr()
-	{
-		return MakePtr<IndexBuffer>();
 	}
 
 	void IndexBuffer::SetData(uint32_t* indices, uint32_t count) const

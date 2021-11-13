@@ -16,17 +16,13 @@ namespace Schism::Gl
 		VertexBuffer(std::vector<float>& vertices, const BufferLayout& layout, bool dynamic = true);
 		virtual ~VertexBuffer();
 
-		static Ref<VertexBuffer> CreateRef(const BufferLayout& layout);
-		static Ptr<VertexBuffer> CreatePtr(const BufferLayout& layout);
-		static Ref<VertexBuffer> CreateRef(float* vertices, size_t size, const BufferLayout& layout, bool dynamic = true);
-		static Ref<VertexBuffer> CreateRef(std::vector<float>& vertices, const BufferLayout& layout, bool dynamic = true);
-		static Ptr<VertexBuffer> CreatePtr(float* vertices, size_t size, const BufferLayout& layout, bool dynamic = true);
-		static Ptr<VertexBuffer> CreatePtr(std::vector<float>& vertices, const BufferLayout& layout, bool dynamic = true);
+		static Ref<VertexBuffer> Create(const BufferLayout& layout);
+		static Ref<VertexBuffer> Create(void* vertices, size_t size, const BufferLayout& layout);
 		
-		const BufferLayout& GetLayout() const { return m_Layout; };
+		const BufferLayout& GetLayout() const { return m_Layout; };		
 
-		void SetData(float* vertices, size_t size);
-		void UpdateSubData(float* vertices, size_t size);
+		void SetData(void* vertices, size_t size);
+		void UpdateSubData(void* vertices, size_t size);
 
 		template<typename T>
 		void SetData(std::vector<T>& vertices, size_t count)

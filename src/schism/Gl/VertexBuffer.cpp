@@ -41,44 +41,27 @@ namespace Schism::Gl
 		glDeleteBuffers(1, &m_BufferID);
 	}
 
-	Ref<VertexBuffer> VertexBuffer::CreateRef(const BufferLayout& layout)
+	Ref<VertexBuffer> VertexBuffer::Create(const BufferLayout& layout)
 	{
 		return MakeRef<VertexBuffer>(layout);
 	}
 
-	Ptr<VertexBuffer> VertexBuffer::CreatePtr(const BufferLayout& layout)
+	Ref<VertexBuffer> VertexBuffer::Create(void* vertices, size_t size, const BufferLayout& layout)
 	{
-		return MakePtr<VertexBuffer>(layout);
+		auto ref = Create(layout);
+		ref->SetData(vertices, size);
+		return ref;
 	}
+
 	
-	Ref<VertexBuffer> VertexBuffer::CreateRef(float* vertices, size_t size, const BufferLayout& layout, bool dynamic)
-	{
-		return MakeRef<VertexBuffer>(vertices, size, layout, dynamic);
-	}
-
-	Ref<VertexBuffer> VertexBuffer::CreateRef(std::vector<float>& vertices, const BufferLayout& layout, bool dynamic)
-	{
-		return MakeRef<VertexBuffer>(vertices, layout, dynamic);
-	}
-
-	Ptr<VertexBuffer> VertexBuffer::CreatePtr(float* vertices, size_t size, const BufferLayout& layout, bool dynamic)
-	{
-		return MakePtr<VertexBuffer>(vertices, size, layout, dynamic);
-	}
-
-	Ptr<VertexBuffer> VertexBuffer::CreatePtr(std::vector<float>& vertices, const BufferLayout& layout, bool dynamic)
-	{
-		return MakePtr<VertexBuffer>(vertices, layout, dynamic);
-	}
-	
-	void VertexBuffer::SetData(float* vertices, size_t size)
+	void VertexBuffer::SetData(void* vertices, size_t size)
 	{
 		if (!m_Dynamic) return;
 		Bind();
 		glBufferData(GL_ARRAY_BUFFER, size, vertices, GL_DYNAMIC_DRAW);
 	}
 
-	void VertexBuffer::UpdateSubData(float* vertices, size_t size)
+	void VertexBuffer::UpdateSubData(void* vertices, size_t size)
 	{
 		// Todo: Finish this
 	}

@@ -1,5 +1,6 @@
 #include "RenderAPI.h"
 
+#include "Renderer2D.h"
 #include "glad/glad.h"
 
 namespace Schism::Renderer
@@ -10,13 +11,15 @@ namespace Schism::Renderer
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 		glEnable(GL_DEPTH_TEST);
+
+		Renderer2D::Init();
 	}
 
 	void API::Shutdown()
 	{
-		
+		Renderer2D::Shutdown();
 	}
-
+	
 	void API::SetClearColor(const glm::vec4& color)
 	{
 		glClearColor(color.r, color.g, color.b, color.a);
