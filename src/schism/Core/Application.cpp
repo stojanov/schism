@@ -1,6 +1,9 @@
 #include "Application.h"
 
+#include "imgui.h"
 #include "Window.h"
+#include "backends/imgui_impl_glfw.h"
+#include "backends/imgui_impl_opengl3.h"
 #include "GLFW/glfw3.h"
 #include "schism/Renderer/RenderAPI.h"
 #include "schism/System/System.h"
@@ -41,6 +44,15 @@ namespace Schism
 		SC_CORE_INFO("Gpu - {0} {1}", glGetString(GL_VENDOR), glGetString(GL_RENDERER));
 		SC_CORE_INFO("Driver - {0}", glGetString(GL_VERSION));
 		SC_CORE_INFO("Shader Version - {0}", glGetString(GL_SHADING_LANGUAGE_VERSION));
+		SC_CORE_INFO("Processor count - {0}", std::thread::hardware_concurrency());
+
+		// TEMPPPPP !!!
+		ImGui::CreateContext();
+		ImGuiIO& io = ImGui::GetIO(); (void)io;
+
+		ImGui::StyleColorsDark();
+		ImGui_ImplGlfw_InitForOpenGL(Window->GetNativeWindow(), true);
+		ImGui_ImplOpenGL3_Init("#version 400");
 	}
 
 	Application::~Application()

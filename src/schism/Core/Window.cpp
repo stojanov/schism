@@ -91,7 +91,7 @@ namespace Schism::Core
 			{
 				if (button < 0 || button > 2)
 				{
-					SC_CORE_ERROR("Mouse button not supported!");
+					SC_CORE_ERROR("Mouse button not supported! Mouse button recived {0}", button);
 					return;
 				}
 
@@ -110,7 +110,7 @@ namespace Schism::Core
 
 				data->Input.MousePosition = { xpos, ypos };
 
-				Mouse::Button MouseBtn = (Mouse::Button)(button);
+				const auto MouseBtn = (Mouse::Button)(button);
 				bool* MouseButtonState = MouseButtonStates[button];
 
 				if (action == GLFW_PRESS)

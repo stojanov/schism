@@ -1,15 +1,18 @@
 #include "schism/Interfaces/IScene.h"
 #include "schism/Renderer/OrthographicCamera.h"
-#include "schism/Renderer/SpriteRenderer.h"
+#include "schism/Core/Assets.h"
+#include "schism/Game/Entity.h"
+
 
 using namespace Schism;
 
-class SampleScene: public IScene
+
+class Chess: public IScene
 {
 public:
-	SampleScene(Core::SharedContextRef ctx, const std::string& name);
-	~SampleScene();
-	
+	Chess(Core::SharedContextRef ctx, const std::string& name);
+	~Chess();
+
 	void OnAttach() override;
 	void OnDetach() override;
 	void OnPause() override;
@@ -18,8 +21,7 @@ public:
 	void OnDraw() override;
 	void OnSystemEvent(Event& e) override;
 private:
-	entt::entity m_Ship1;
-	entt::registry m_Registry;
-	SpriteRenderer m_Renderer;
+	Entity m_Piece;
+	Core::Assets Assets;
 	Renderer::OrthographicCamera m_Camera;
 };

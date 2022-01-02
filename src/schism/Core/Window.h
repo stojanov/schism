@@ -18,6 +18,8 @@ namespace Schism::Core
 		void ProcessEvents();
 		void SetEventCallback(EventCallback callback);
 
+
+		// Temporary, shouldn't expose glfw window
 		GLFWwindow* GetNativeWindow() const { return m_WindowPtr; }
 		GLFWwindow* GetLoadingContext() const { return m_LoadWinPtr; }
 	private:

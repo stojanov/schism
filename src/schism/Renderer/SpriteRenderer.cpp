@@ -2,37 +2,49 @@
 
 #include "ext/matrix_transform.hpp"
 
-namespace Schism::Renderer
+namespace Schism
 {
-	SpriteRenderer::SpriteRenderer()
+	Ref<Gl::VertexBuffer> SpriteRenderer::s_VertBuff;
+	Ref<Gl::VertexArray> SpriteRenderer::s_VertexArray;
+	Resources::ShaderHandle SpriteRenderer::s_Shader;
+
+	void SpriteRenderer::Init(Resources::ShaderHandle shader)
 	{
-		m_VertBuff = Gl::VertexBuffer::Create({ {
+		s_Shader = shader;
+
+		s_VertBuff = Gl::VertexBuffer::Create({ {
 			{ Gl::ShaderDataType::Float2, "position" },
 			{ Gl::ShaderDataType::Float2, "texcord" },
-		}});
+		} });
+		s_VertBuff->SetData((float*)vertices, sizeof(vertices));
 
-		m_VertBuff->SetData((float*)vertices, sizeof(vertices));
-
-		m_VertexArray.AddVertexBuffer(m_VertBuff);
+		s_VertexArray = Gl::VertexArray::Create();
+		s_VertexArray->AddVertexBuffer(s_VertBuff);			
 	}
-	
-	SpriteRenderer::SpriteRenderer(Resources::ShaderHandle shader)
-		:
-		m_Shader(shader)
+
+	void SpriteRenderer::Init()
 	{
-		m_VertBuff = Gl::VertexBuffer::Create({ {
+		s_VertBuff = Gl::VertexBuffer::Create({ {
 			{ Gl::ShaderDataType::Float2, "position" },
 			{ Gl::ShaderDataType::Float2, "texcord" },
-		}});
+		} });
 
-		m_VertBuff->SetData((float*) vertices, sizeof(vertices));
+		s_VertBuff->SetData((float*)vertices, sizeof(vertices));
 
-		m_VertexArray.AddVertexBuffer(m_VertBuff);
+		s_VertexArray = Gl::VertexArray::Create();
+		s_VertexArray->AddVertexBuffer(s_VertBuff);
+	}
+
+	void SpriteRenderer::Shutdown()
+	{
+		// Not needed because if sprite renderer goes out of scope
+		// the pointer is only used in this class so it should release it self automatically
+		s_VertBuff.reset(); 
 	}
 
 	void SpriteRenderer::RegisterShader(Resources::ShaderHandle shader)
 	{
-		m_Shader = shader;
+		s_Shader = shader;
 	}
 
 	void SpriteRenderer::Draw(Components::Transform2D& transformComponent, Components::Sprite& spriteComponent, const glm::mat4& proj)
@@ -45,12 +57,12 @@ namespace Schism::Renderer
 
 		spriteComponent.sprite->Bind(0);
 		
-		m_Shader->Bind();
-		m_Shader->SetMat4("projection", proj);
-		m_Shader->SetMat4("transform", transform);
-		m_Shader->SetInt("sprite", 0);
+		s_Shader->Bind();
+		s_Shader->SetMat4("projection", proj);
+		s_Shader->SetMat4("transform", transform);
+		s_Shader->SetInt("sprite", 0);
 
-		m_VertexArray.Bind();
+		s_VertexArray->Bind();
 		glDrawArrays(GL_TRIANGLES, 0, 6);
 	}
 	

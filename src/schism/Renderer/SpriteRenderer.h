@@ -4,24 +4,25 @@
 #include "schism/Gl/VertexBuffer.h"
 #include "schism/Core/Resources.h"
 
-#include "schism/Components/Transfrom2D.h"
+#include "schism/Components/Transform2D.h"
 #include "schism/Components/Sprite.h"
 
-namespace Schism::Renderer
+namespace Schism
 {
 	class SpriteRenderer
 	{
 	public:
-		SpriteRenderer();
-		SpriteRenderer(Resources::ShaderHandle shader);
-
-		void RegisterShader(Resources::ShaderHandle shader);
+		static void Init();
+		static void Init(Resources::ShaderHandle shader);
+		static void Shutdown();
 		
-		void Draw(Components::Transform2D& transform, Components::Sprite& sprite, const glm::mat4& proj);
+		static void RegisterShader(Resources::ShaderHandle shader);
+		
+		static void Draw(Components::Transform2D& transform, Components::Sprite& sprite, const glm::mat4& proj);
 	private:
-		Ref<Gl::VertexBuffer> m_VertBuff;
-		Gl::VertexArray m_VertexArray; 
-		Resources::ShaderHandle m_Shader;
+		static Ref<Gl::VertexBuffer> s_VertBuff;
+		static Ref<Gl::VertexArray> s_VertexArray; 
+		static Resources::ShaderHandle s_Shader;
 		
 		static constexpr float vertices[] = {
 			0.0f, 1.0f,		0.0f, 1.0f,

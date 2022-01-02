@@ -1,23 +1,28 @@
 #include "RenderAPI.h"
 
-#include "Renderer2D.h"
 #include "glad/glad.h"
+
+#include "Renderer2D.h"
+#include "SpriteRenderer.h"
 
 namespace Schism::Renderer
 {
 	void API::Init()
-	{
-		glEnable(GL_BLEND);
+	{  
+		glEnable(GL_BLEND); 
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 		glEnable(GL_DEPTH_TEST);
 
 		Renderer2D::Init();
+		// This will be deprecated, stays here to test other parts while the batch renderer gets finished
+		SpriteRenderer::Init();  
 	}
 
 	void API::Shutdown()
 	{
 		Renderer2D::Shutdown();
+		SpriteRenderer::Shutdown();
 	}
 	
 	void API::SetClearColor(const glm::vec4& color)

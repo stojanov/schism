@@ -11,9 +11,9 @@ namespace Schism::Core
 {
 	struct TextureLoader: entt::resource_loader<TextureLoader, Renderer::Texture>
 	{
-		Ref<Renderer::Texture> static load(const std::string& path)
+		Ref<Renderer::Texture> static load(const std::string& path, bool pixelart = false)
 		{
-			return Renderer::Texture::CreateRef(path);
+			return Renderer::Texture::CreateRef(path, pixelart);
 		}
 	};
 

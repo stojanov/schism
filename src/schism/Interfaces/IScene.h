@@ -6,6 +6,8 @@
 
 namespace Schism
 {
+	class Entity;
+
 	class IScene
 	{
 	public:
@@ -20,11 +22,19 @@ namespace Schism
 		virtual void OnDraw() = 0;
 		virtual void OnSystemEvent(Event& e) = 0;
 
+		entt::registry& Registry()
+		{
+			return m_Registry;
+		}
+
+		Entity CreateEntity();
+
 		const std::string& GetName() const { return m_Name; }
 		bool WasPaused() const { return m_WasPaused; }
 	protected:
 		bool m_WasPaused{ false };
 		std::string m_Name;
 		Core::SharedContextRef m_Ctx;
+		entt::registry m_Registry;
 	};
 }

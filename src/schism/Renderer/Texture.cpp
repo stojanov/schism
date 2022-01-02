@@ -16,9 +16,9 @@ namespace Schism::Renderer
 		glTextureParameteri(m_TextureID, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	}
 
-	Texture::Texture(const std::string& path, bool flip)
+	Texture::Texture(const std::string& path, bool pixelart)
 	{
-		if (flip) stbi_set_flip_vertically_on_load(1);
+		//stbi_set_flip_vertically_on_load(1);
 		auto data = stbi_load(path.c_str(), &m_Width, &m_Height, &m_ChannelCount, 0);
 
 		if (!data)
@@ -40,8 +40,16 @@ namespace Schism::Renderer
 		glCreateTextures(GL_TEXTURE_2D, 1, &m_TextureID);
 		glBindTexture(GL_TEXTURE_2D, m_TextureID);
 
-		glTextureParameteri(m_TextureID, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTextureParameteri(m_TextureID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+		GLint filtering = GL_LINEAR;
+
+		if (pixelart)
+		{
+			filtering = GL_NEAREST;
+		}
+
+		glTextureParameteri(m_TextureID, GL_TEXTURE_MIN_FILTER, filtering);
+		glTextureParameteri(m_TextureID, GL_TEXTURE_MAG_FILTER, filtering);
 
 		glTextureParameteri(m_TextureID, GL_TEXTURE_WRAP_S, GL_REPEAT);
 		glTextureParameteri(m_TextureID, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -54,9 +62,9 @@ namespace Schism::Renderer
 		stbi_image_free(data);
 	}
 
-	Ref<Texture> Texture::CreateRef(const std::string& path, bool flip)
+	Ref<Texture> Texture::CreateRef(const std::string& path, bool pixelart)
 	{
-		return MakeRef<Texture>(path, flip);
+		return MakeRef<Texture>(path, pixelart);
 	}
 
 	void Texture::SetData(uint8_t* data, uint32_t size)

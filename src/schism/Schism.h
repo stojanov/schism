@@ -6,6 +6,8 @@
 #include "Schism/Core/Application.h"
 #include "Schism/Sandbox/Sandbox.h"
 #include "Schism/System/System.h"
+#include "Schism/Renderer/Renderer2D.h"
+#include "Schism/Renderer/SpriteRenderer.h"
 
 namespace Schism
 {

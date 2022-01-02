@@ -1,5 +1,7 @@
 #include "IScene.h"
 
+#include <schism/Game/Entity.h>
+
 namespace Schism
 {
 	IScene::IScene(Core::SharedContextRef ctx, const std::string& name)
@@ -9,9 +11,13 @@ namespace Schism
 	{
 	}
 
-	IScene::~IScene()
+	Entity IScene::CreateEntity()
 	{
-		
+		return { this, m_Registry.create() };
 	}
 
+	IScene::~IScene()
+	{
+
+	}
 }

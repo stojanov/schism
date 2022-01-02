@@ -12,11 +12,11 @@ namespace Schism::Renderer
 	{
 	public:
 		Texture();
-		Texture(const std::string& path, bool flip = true);
+		Texture(const std::string& path, bool pixelart = false);
 		~Texture();
 
 		void SetData(uint8_t* data, uint32_t size);
-		static Ref<Texture> CreateRef(const std::string& path, bool flip = true);
+		static Ref<Texture> CreateRef(const std::string& path, bool pixelart = false);
 		void Bind(uint8_t slot);
 
 		GLenum GetFormat() const { return m_Format; }

@@ -1,9 +1,10 @@
 #include "schism/Schism.h"
+#include "Game.h"
 
 int main(int argc, char* argv[])
 {
 	Schism::Init();
-	Schism::Sandbox App;
+	Game app;
 	
-	App.Run();
+	app.Run();
 }

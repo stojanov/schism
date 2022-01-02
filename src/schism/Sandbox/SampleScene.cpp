@@ -1,7 +1,7 @@
 #include "SampleScene.h"
 
 #include "schism/Components/Sprite.h"
-#include "schism/Components/Transfrom2D.h"
+#include "schism/Components/Transform2D.h"
 
 using namespace Schism;
 
