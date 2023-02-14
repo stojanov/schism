@@ -10,7 +10,7 @@ Game::Game()
 
 	SpriteRenderer::RegisterShader(m_Ctx->GlobalAssets.Shaders.GetHandle("spriterenderer"));
 
-	m_SceneManager.Register<Chess>("chess");
+	m_SceneManager.Register<Chess::Chess>("chess");
 }
 
 Game::~Game()
