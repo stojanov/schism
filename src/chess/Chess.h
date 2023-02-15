@@ -1,9 +1,9 @@
 #include "schism/Interfaces/IScene.h"
 #include "schism/Renderer/OrthographicCamera.h"
 #include "schism/Core/Assets.h"
-#include "BoardManager.h"
+#include "BoardRenderer.h"
 #include "Engine.h"
-
+#include "Game.h"
 
 using namespace Schism;
 
@@ -24,8 +24,8 @@ namespace Chess
 		void OnSystemEvent(Event& e) override;
 	private:
 		Core::Assets m_Assets;
-		BoardManager m_BoardManager;
-		Engine m_Engine;
+		BoardRenderer m_BoardRenderer;
+		Game m_Game;
 		Renderer::OrthographicCamera m_Camera;
 	};
 }

@@ -9,7 +9,7 @@
 
 namespace Chess
 {
-	class BoardManager
+	class BoardRenderer
 	{
 	public:
 		struct Resources
@@ -17,22 +17,29 @@ namespace Chess
 			std::array<Schism::Components::Sprite, 9> whiteSprites;
 			std::array<Schism::Components::Sprite, 9> blackSprites;
 			Schism::Components::Sprite board;
+			Schism::Components::Sprite validMove;
 		};
 
-		BoardManager();
-		std::optional<Move> ProcessInput(Schism::Event& e, const Board& board);
+		BoardRenderer();
+
 		void Init(Resources&& sprites, uint16_t width, uint16_t height,
 			float pieceSize, float offsetPercentage);
-		void DrawBoard(const Board& board);
-	private:
-		std::pair<uint8_t, uint8_t> FindBoardPositionFromCoord(float x, float y)
-		{
-			uint8_t gridX = (x - m_Offset) / m_PieceSize;
-			uint8_t gridY = (y - m_Offset) / m_PieceSize;
 
-			return std::make_pair(gridX, gridY);
+		void DrawValidMoves(std::vector<Position>& validMoves);
+		
+		void DrawBoard(const Board& board, bool flipped);
+
+		float GetOffset()
+		{
+			return m_Offset;
 		}
 
+		float GetPieceSize()
+		{
+			return m_PieceSize;
+		}
+
+	private:
 		bool m_IsPieceSelected{ false };
 		std::pair<uint8_t, uint8_t> m_SelectedPosition;
 		Resources m_Sprites;

@@ -7,14 +7,12 @@ namespace Chess
 	enum PieceType: uint8_t
 	{
 		PieceType_Pawn = 0,
-		PieceType_LeftKnight,
-		PieceType_RightKnight,
-		PieceType_LeftBishop,
-		PieceType_RightBishop,
+		PieceType_Knight,
+		PieceType_Bishop,
 		PieceType_Queen,
-		PieceType_LeftRook,
-		PieceType_RightRook,
+		PieceType_Rook,
 		PieceType_King,
+		PieceType_Count,
 		PieceType_Blank,
 	};
 
@@ -30,12 +28,38 @@ namespace Chess
 		PieceColor color{ PieceColor_White };
 	};
 
+	struct Position
+	{
+		uint8_t x;
+		uint8_t y;
+
+		bool operator == (const Position& rhs) const
+		{
+			return x == rhs.x && y == rhs.y;
+		}
+	}; 
+
 	struct Move
 	{
-		Piece piece{ PieceType_Blank };
-		uint8_t positionX{ 0 };
-		uint8_t positionY{ 0 };
+		Piece piece{ PieceType_Blank }; // Might be useless
+		Position currentPosition;
+		Position prevPosition;
 	};
 
 	using Board = std::array<std::array<Piece, 8>, 8>;
+
+	inline Position FlipBoardPosition(const Position& pos)
+	{
+		return { (uint8_t)(7 - pos.x), (uint8_t)(7 - pos.y) };
+	}
+
+	inline bool IsValidPiece(PieceType type)
+	{
+		return (type != PieceType_Count) && (type != PieceType_Blank);
+	}
+
+	inline PieceColor InvertPieceColor(PieceColor color)
+	{
+		return color == PieceColor_White ? PieceColor_Black : PieceColor_White;
+	}
 }

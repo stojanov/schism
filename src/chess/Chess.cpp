@@ -16,30 +16,25 @@ namespace Chess
 	Chess::Chess(Core::SharedContextRef ctx, const std::string& name)
 		:
 		IScene(ctx, name),
-		m_Camera(0, m_Ctx->Window->GetWidth(), m_Ctx->Window->GetHeight(), 0)
+		m_Camera(0, m_Ctx->Window->GetWidth(), m_Ctx->Window->GetHeight(), 0),
+		m_Game{ m_BoardRenderer }
 	{
-		BoardManager::Resources sprites;
+		BoardRenderer::Resources sprites;
 
 		sprites.board.sprite = m_Assets.Textures.Load("board", "res/chess/board_alt.png", true);
-
+		sprites.validMove.sprite = m_Assets.Textures.Load("validMove", "res/chess/valid_move.png", true);
 		sprites.whiteSprites[PieceType_Pawn].sprite = m_Assets.Textures.Load("WPawn", "res/chess/white_pawn.png", true);
-		sprites.whiteSprites[PieceType_LeftKnight].sprite = m_Assets.Textures.Load("WLeftKnight", "res/chess/white_knight.png", true);
-		sprites.whiteSprites[PieceType_RightKnight].sprite = m_Assets.Textures.Load("WRightKnight", "res/chess/white_knight.png", true);
-		sprites.whiteSprites[PieceType_LeftBishop].sprite = m_Assets.Textures.Load("WLeftBishop", "res/chess/white_bishop.png", true);
-		sprites.whiteSprites[PieceType_RightBishop].sprite = m_Assets.Textures.Load("WRightBishop", "res/chess/white_bishop.png", true);
+		sprites.whiteSprites[PieceType_Knight].sprite = m_Assets.Textures.Load("WLeftKnight", "res/chess/white_knight.png", true);
+		sprites.whiteSprites[PieceType_Bishop].sprite = m_Assets.Textures.Load("WLeftBishop", "res/chess/white_bishop.png", true);
 		sprites.whiteSprites[PieceType_Queen].sprite = m_Assets.Textures.Load("WQueen", "res/chess/white_queen.png", true);
-		sprites.whiteSprites[PieceType_LeftRook].sprite = m_Assets.Textures.Load("WRook", "res/chess/white_rook.png", true);
-		sprites.whiteSprites[PieceType_RightRook].sprite = m_Assets.Textures.Load("WRook", "res/chess/white_rook.png", true);
+		sprites.whiteSprites[PieceType_Rook].sprite = m_Assets.Textures.Load("WRook", "res/chess/white_rook.png", true);
 		sprites.whiteSprites[PieceType_King].sprite = m_Assets.Textures.Load("WKing", "res/chess/white_king.png", true);
 		
 		sprites.blackSprites[PieceType_Pawn].sprite = m_Assets.Textures.Load("BPawn", "res/chess/black_pawn.png", true);
-		sprites.blackSprites[PieceType_LeftKnight].sprite = m_Assets.Textures.Load("BLeftKnight", "res/chess/black_knight.png", true);
-		sprites.blackSprites[PieceType_RightKnight].sprite = m_Assets.Textures.Load("BRightKnight", "res/chess/black_knight.png", true);
-		sprites.blackSprites[PieceType_LeftBishop].sprite = m_Assets.Textures.Load("BLeftBishop", "res/chess/black_bishop.png", true);
-		sprites.blackSprites[PieceType_RightBishop].sprite = m_Assets.Textures.Load("BRightBishop", "res/chess/black_bishop.png", true);
+		sprites.blackSprites[PieceType_Knight].sprite = m_Assets.Textures.Load("BLeftKnight", "res/chess/black_knight.png", true);
+		sprites.blackSprites[PieceType_Bishop].sprite = m_Assets.Textures.Load("BLeftBishop", "res/chess/black_bishop.png", true);
 		sprites.blackSprites[PieceType_Queen].sprite = m_Assets.Textures.Load("BQueen", "res/chess/black_queen.png", true);
-		sprites.blackSprites[PieceType_LeftRook].sprite = m_Assets.Textures.Load("BRook", "res/chess/black_rook.png", true);
-		sprites.blackSprites[PieceType_RightRook].sprite = m_Assets.Textures.Load("BRook", "res/chess/black_rook.png", true);
+		sprites.blackSprites[PieceType_Rook].sprite = m_Assets.Textures.Load("BRook", "res/chess/black_rook.png", true);
 		sprites.blackSprites[PieceType_King].sprite = m_Assets.Textures.Load("BKing", "res/chess/black_king.png", true);
 
 		int width = m_Ctx->Window->GetWidth();
@@ -47,7 +42,7 @@ namespace Chess
 		float offsetPercentage = 0.32;
 		float pieceSize = (width - (width * offsetPercentage)) / 8;
 
-		m_BoardManager.Init(std::move(sprites), width, height, pieceSize, 0.16f);
+		m_BoardRenderer.Init(std::move(sprites), width, height, pieceSize, 0.16f);
 	}
 
 	Chess::~Chess() = default;
@@ -73,14 +68,7 @@ namespace Chess
 
 	void Chess::OnSystemEvent(Event& e)
 	{
-		const auto& board = m_Engine.GetBoardState();
-
-		auto potentialMove = m_BoardManager.ProcessInput(e, board);
-
-		if (potentialMove)
-		{
-			m_Engine.MakeMove(*potentialMove);
-		}
+		m_Game.ProcessInput(e);
 	}
 
 	void Chess::OnUpdate(Timestep ts)
@@ -94,7 +82,7 @@ namespace Chess
 		ImGui::NewFrame();
 
 		SpriteRenderer::BeginScene(m_Camera.GetProjectionMatrix());
-		m_BoardManager.DrawBoard(m_Engine.GetBoardState());
+		m_Game.DrawBoard();
 
 		static float size = 50;
 
