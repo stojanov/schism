@@ -167,11 +167,11 @@ namespace Chess
 
 		validMoves.reserve(5);
 
-		auto& myPiece = m_Board[position.x][position.y];
+		const auto& myPiece = m_Board[position.x][position.y];
 
-		inline auto checkOpposingPiece = [&](const Position& newPosition)
+		auto checkOpposingPiece = [&](const Position& newPosition)
 		{
-			auto& opposingPiece = m_Board[newPosition.x][newPosition.y];
+			const auto& opposingPiece = m_Board[newPosition.x][newPosition.y];
 			if (IsValidPiece(opposingPiece.type) &&
 				myPiece.color == InvertPieceColor(opposingPiece.color))
 			{
@@ -179,10 +179,10 @@ namespace Chess
 			}
 		};
 
-		inline auto checkCanTake = [&](bool descending)
+		auto checkCanTake = [&](bool descending)
 		{
 			bool left = position.x != 0;
-			bool right = position.x != 6;
+			bool right = position.x != 7;
 
 			if (!descending)
 			{
@@ -230,7 +230,7 @@ namespace Chess
 				if (position.y <= 1)
 				{
 					auto& piece = m_Board[position.x][position.y - 1];
-					if (!IsValidPiece(piece.type))
+					if (piece.type == PieceType_Blank)
 					{
 						Position newPos{ position.x, position.y - 1 };
 						validMoves.push_back(newPos);
@@ -250,7 +250,7 @@ namespace Chess
 				if (position.y >= 6)
 				{
 					auto& piece = m_Board[position.x][position.y + 1];
-					if (!IsValidPiece(piece.type))
+					if (piece.type == PieceType_Blank)
 					{
 						Position newPos{ position.x, position.y + 1 };
 						validMoves.push_back(newPos);
@@ -264,27 +264,27 @@ namespace Chess
 
 	std::vector<Position> Engine::ValidMovesKnight(const Position& position)
 	{
-
+		return {};
 	}
 
 	std::vector<Position> Engine::ValidMovesBishop(const Position& position)
 	{
-
+		return {};
 	}
 
 	std::vector<Position> Engine::ValidMovesQueen(const Position& position)
 	{
-
+		return {};
 	}
 
 	std::vector<Position> Engine::ValidMovesKing(const Position& position)
 	{
-
+		return {};
 	}
 
 	std::vector<Position> Engine::ValidMovesRook(const Position& position)
 	{
-
+		return {};
 	}
 
 }

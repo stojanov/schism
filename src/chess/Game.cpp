@@ -20,9 +20,9 @@ namespace Chess
 			const auto& board = m_Engine.GetBoardState();
 			Schism::MouseButtonPressedEvent evt = static_cast<Schism::MouseButtonPressedEvent&>(e);
 			auto& pos = evt.GetPosition();
-			auto boardPosition = FindBoardPositionFromCoord(pos.x, pos.y);
+			auto&& boardPosition = FindBoardPositionFromCoord(pos.x, pos.y);
 
-			if (boardPosition.x >= board.size() || boardPosition.y >= board.size() ||
+			if (boardPosition.x > board.size() || boardPosition.y > board.size() ||
 				boardPosition.x < 0 || boardPosition.y < 0)
 			{
 				return;
@@ -30,17 +30,45 @@ namespace Chess
 
 			if (!m_State.isWhite)
 			{
-				boardPosition = std::move(FlipBoardPosition(boardPosition));
+				boardPosition = FlipBoardPosition(boardPosition);
 			}
+
+			auto selectPiece = [&](const auto& position)
+			{
+				m_State.pieceSelected = true;
+				m_State.selectedPosition = position;
+
+				if (!m_State.isWhite)
+				{
+					m_ValidMoves = m_Engine.GetValidMoves(FlipBoardPosition(position));
+				}
+				else
+				{
+					m_ValidMoves = m_Engine.GetValidMoves(position);
+				}
+				if (m_ValidMoves)
+				{
+					SC_CORE_INFO("Valid moves count {}", m_ValidMoves->size());
+				}
+			};
 
 			if (m_State.pieceSelected)
 			{
+				auto& prevPiece = board[m_State.selectedPosition.x][m_State.selectedPosition.y];
+				auto& currentPiece = board[boardPosition.x][boardPosition.y];
+
+				if (prevPiece.color == currentPiece.color && IsValidPiece(currentPiece.type))
+				{
+					selectPiece(boardPosition);
+					return;
+				}
+
 				Move m;
 				m.piece = board[m_State.selectedPosition.x][m_State.selectedPosition.y];
 				m.currentPosition = boardPosition;
 				m.prevPosition = m_State.selectedPosition;
 				m_State.pieceSelected = false;
-				m_ValidMoves.clear();
+				m_ValidMoves = std::nullopt;
 
 				m_Engine.MakeMove(m); // Temporary
 
@@ -52,13 +80,8 @@ namespace Chess
 				return;
 			}
 
-			m_State.pieceSelected = true;
-			m_State.selectedPosition = boardPosition;
-
-			auto validMoves = m_Engine.GetValidMoves(boardPosition);
-
-			if ()
-			m_ValidMoves = m_Engine.GetValidMoves(boardPosition);
+			selectPiece(boardPosition);
+			
 			break;
 		}
 		default:
@@ -68,6 +91,10 @@ namespace Chess
 
 	void Game::DrawBoard()
 	{
+		if (m_ValidMoves)
+		{
+			m_BoardRenderer.DrawValidMoves(*m_ValidMoves);
+		}
 		m_BoardRenderer.DrawBoard(m_Engine.GetBoardState(), !m_State.isWhite);
 	}
 }

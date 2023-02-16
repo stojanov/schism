@@ -22,13 +22,13 @@ namespace Chess
 			bool isWhite{ false };
 		};
 
-		Position FindBoardPositionFromCoord(float x, float y) const
+		[[nodiscard]] Position FindBoardPositionFromCoord(float x, float y) const
 		{
-			auto offset = m_BoardRenderer.GetOffset();
-			auto pieceSize = m_BoardRenderer.GetPieceSize();
+			const auto offset = m_BoardRenderer.GetOffset();
+			const auto pieceSize = m_BoardRenderer.GetPieceSize();
 
-			uint8_t gridX = (x - offset) / pieceSize;
-			uint8_t gridY = (y - offset) / pieceSize;
+			const uint8_t gridX = (x - offset) / pieceSize;
+			const uint8_t gridY = (y - offset) / pieceSize;
 
 			return { gridX, gridY };
 		}
@@ -36,7 +36,7 @@ namespace Chess
 		State m_State;
 		Engine m_Engine;
 		BoardRenderer& m_BoardRenderer;
-		std::vector<Position> m_ValidMoves;
+		std::optional<std::vector<Position>> m_ValidMoves;
 		float m_Offset;
 		float m_PieceSize;
 	};
