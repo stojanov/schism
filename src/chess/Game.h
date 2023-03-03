@@ -19,7 +19,7 @@ namespace Chess
 		{
 			bool pieceSelected{ false };
 			Position selectedPosition{ 0, 0 };
-			bool isWhite{ false };
+			bool isWhite{ true };
 		};
 
 		[[nodiscard]] Position FindBoardPositionFromCoord(float x, float y) const

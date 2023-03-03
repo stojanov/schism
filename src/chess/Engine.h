@@ -19,16 +19,22 @@ namespace Chess
 			return m_Board; 
 		}
 	private:
+		std::vector<Position> m_ValidMoves;
+
+		bool CheckObstacle(std::vector<Position>& validMoves, const Position& position, bool canTake) const;
+
+		void CheckObstacleVertically(std::vector<Position>& validMoves, const Position& position, 
+			uint8_t length, bool canTake, bool descending) const;
+
 		void CheckObstacleHorizontally(std::vector<Position>& validMoves, const Position& position, 
-			uint8_t length, bool canTake, bool descending);
+			uint8_t length, bool canTake, bool descending) const;
 
-
-		std::vector<Position> ValidMovesPawn(const Position& position);
-		std::vector<Position> ValidMovesKnight(const Position& position);
-		std::vector<Position> ValidMovesBishop(const Position& position);
-		std::vector<Position> ValidMovesQueen(const Position& position);
-		std::vector<Position> ValidMovesKing(const Position& position);
-		std::vector<Position> ValidMovesRook(const Position& position);
+		[[nodiscard]] const std::vector<Position>& ValidMovesPawn(const Position& position);
+		[[nodiscard]] const std::vector<Position>& ValidMovesKnight(const Position& position);
+		[[nodiscard]] const std::vector<Position>& ValidMovesBishop(const Position& position);
+		[[nodiscard]] const std::vector<Position>& ValidMovesQueen(const Position& position);
+		[[nodiscard]] const std::vector<Position>& ValidMovesKing(const Position& position);
+		[[nodiscard]] const std::vector<Position>& ValidMovesRook(const Position& position);
 
 
 		Board m_Board;

@@ -1,5 +1,7 @@
 #include "Engine.h"
 
+#include "schism/System/Log.h"
+
 namespace Chess
 {
 	Engine::Engine()
@@ -37,6 +39,9 @@ namespace Chess
 		m_Board[5][7] = { PieceType_Bishop, PieceColor_White };
 		m_Board[6][7] = { PieceType_Knight, PieceColor_White };
 		m_Board[7][7] = { PieceType_Rook, PieceColor_White };
+
+		m_ValidMoves.clear();
+		m_ValidMoves.reserve(m_Board.size() * 2);
 	}
 
 	bool Engine::MakeMove(const Move& move)
@@ -50,7 +55,7 @@ namespace Chess
 			return false;
 		}
 
-		auto validMoves = GetValidMoves(move.prevPosition);
+		const auto validMoves = GetValidMoves(move.prevPosition);
 		if (!validMoves)
 		{
 			return false; // Figure what to do if no valid moves
@@ -60,6 +65,7 @@ namespace Chess
 		{
 			if (validMovePosition == move.currentPosition)
 			{
+				// Implement takes piece
 				m_Board[move.prevPosition.x][move.prevPosition.y] = { PieceType_Blank };
 				m_Board[move.currentPosition.x][move.currentPosition.y] = piece;
 				return true;
@@ -109,39 +115,40 @@ namespace Chess
 		}
 	}
 
-	void Engine::CheckObstacleHorizontally(std::vector<Position>& validMoves, const Position& position, uint8_t length, bool canTake, bool descending)
+	bool Engine::CheckObstacle(std::vector<Position>& validMoves, const Position& position, bool canTake) const
 	{
-		auto& myPiece = m_Board[position.x][position.y];
-
-		auto checkObstacale = [&](const Position& boardPosition) -> bool
+		if (position.y >= m_Board.size() ||
+			position.x >= m_Board.size())
 		{
-			if (boardPosition.y < 0 || boardPosition.y > m_Board.size())
-			{
-				return false;
-			}
-			auto& piece = m_Board[boardPosition.x][boardPosition.y];
+			return false;
+		}
+		auto& piece = m_Board[position.x][position.y];
 
-			if (canTake)
-			{
-				if (IsValidPiece(piece.type) && piece.color == InvertPieceColor(myPiece.color))
-				{
-					validMoves.push_back(boardPosition);
-					return false;
-				}
-			}
-			else
-			{
-				if (IsValidPiece(piece.type))
-				{
-					return false;
-				}
-				validMoves.push_back(boardPosition);
-			}
-		};
-
-		for (uint8_t y = position.y + 1; y <= position.y + (length - 1); y++)
+		if (canTake &&
+			IsValidPiece(piece.type) &&
+			piece.color == InvertPieceColor(piece.color))
 		{
-			if (!checkObstacale({ position.x, y }))
+			validMoves.push_back(position);
+			SC_CORE_INFO("FOUND TAKING PIECE");
+			return false; // Stop if we find a valid piece to take
+		}
+
+		if (IsValidPiece(piece.type) && piece.color != InvertPieceColor(piece.color))
+		{
+			return false;
+		}
+
+		validMoves.push_back(position);
+
+		return true;
+	}
+
+
+	void Engine::CheckObstacleVertically(std::vector<Position>& validMoves, const Position& position, uint8_t length, bool canTake, bool descending) const
+	{
+		for (uint8_t y = position.y + 1; y <= static_cast<uint8_t>(position.y + (length - 1)); y++)
+		{
+			if (!CheckObstacle(validMoves, {position.x, y}, canTake))
 			{
 				break;
 			}
@@ -149,23 +156,43 @@ namespace Chess
 
 		if (descending)
 		{
-			uint8_t y = position.y - 1;
-			while ((y >= position.y - (length - 1)) && y >= 0)
+			const uint8_t yLimit = (length - 1) > position.y ? 0 : static_cast<uint8_t>(position.y - (length - 1));
+			for (uint8_t y = position.y - 1; y >= yLimit; y--)
 			{
-				if (!checkObstacale({ position.x, y }))
+				if (!CheckObstacle(validMoves, { position.x, y }, canTake))
 				{
 					break;
 				}
-				y--;
 			}
 		}
 	}
 
-	std::vector<Position> Engine::ValidMovesPawn(const Position& position)
+	void Engine::CheckObstacleHorizontally(std::vector<Position>& validMoves, const Position& position, uint8_t length, bool canTake, bool descending) const
 	{
-		std::vector<Position> validMoves;
+		for (uint8_t x = position.x + 1; x <= static_cast<uint8_t>(position.x + (length - 1)); x++)
+		{
+			if (!CheckObstacle(validMoves, { x, position.y }, canTake))
+			{
+				break;
+			}
+		}
 
-		validMoves.reserve(5);
+		if (descending)
+		{
+			const uint8_t xLimit = (length - 1) > position.x ? 0 : static_cast<uint8_t>(position.x - (length - 1));
+			for (uint8_t x = position.x - 1; x >= xLimit; x--)
+			{
+				if (!CheckObstacle(validMoves, { x , position.y }, canTake))
+				{
+					break;
+				}
+			}
+		}
+	}
+
+	const std::vector<Position>& Engine::ValidMovesPawn(const Position& position)
+	{
+		m_ValidMoves.clear();
 
 		const auto& myPiece = m_Board[position.x][position.y];
 
@@ -175,14 +202,14 @@ namespace Chess
 			if (IsValidPiece(opposingPiece.type) &&
 				myPiece.color == InvertPieceColor(opposingPiece.color))
 			{
-				validMoves.push_back(newPosition);
+				m_ValidMoves.push_back(newPosition);
 			}
 		};
 
 		auto checkCanTake = [&](bool descending)
 		{
-			bool left = position.x != 0;
-			bool right = position.x != 7;
+			const bool left = position.x != 0;
+			const bool right = position.x != 7;
 
 			if (!descending)
 			{
@@ -190,12 +217,18 @@ namespace Chess
 				{
 					if (left)
 					{
-						Position newPos{ position.x - 1, position.y + 1 };
+						const Position newPos{
+							static_cast<uint8_t>(position.x - 1),
+							static_cast<uint8_t>(position.y + 1)
+						};
 						checkOpposingPiece(newPos);
 					}
 					if (right)
 					{
-						Position newPos{ position.x + 1, position.y + 1 };
+						const Position newPos{
+							static_cast<uint8_t>(position.x + 1),
+							static_cast<uint8_t>(position.y + 1)
+						};
 						checkOpposingPiece(newPos);
 					}
 				}
@@ -206,12 +239,18 @@ namespace Chess
 				{
 					if (left)
 					{
-						Position newPos{ position.x - 1, position.y - 1};
+						const Position newPos{
+							static_cast<uint8_t>(position.x - 1),
+							static_cast<uint8_t>(position.y - 1)
+						};
 						checkOpposingPiece(newPos);
 					}
 					if (right)
 					{
-						Position newPos{ position.x + 1, position.y - 1 };
+						const Position newPos{
+							static_cast<uint8_t>(position.x + 1),
+							static_cast<uint8_t>(position.y - 1)
+						};
 						checkOpposingPiece(newPos);
 					}
 				}
@@ -223,17 +262,18 @@ namespace Chess
 			checkCanTake(true);
 			if (position.y == 6)
 			{
-				CheckObstacleHorizontally(validMoves, position, 3, false, true);
+				CheckObstacleVertically(m_ValidMoves, position, 3, false, true);
 			}
 			else
 			{
-				if (position.y <= 1)
+				// Need to make sure we setup queening
+				if (position.y >= 1)
 				{
-					auto& piece = m_Board[position.x][position.y - 1];
+					const Position newPos{ position.x, static_cast<uint8_t>(position.y - 1) };
+					const auto& piece = m_Board[newPos.x][newPos.y];
 					if (piece.type == PieceType_Blank)
 					{
-						Position newPos{ position.x, position.y - 1 };
-						validMoves.push_back(newPos);
+						m_ValidMoves.push_back(newPos);
 					}
 				}
 			}
@@ -243,48 +283,59 @@ namespace Chess
 			checkCanTake(false);
 			if (position.y == 1)
 			{
-				CheckObstacleHorizontally(validMoves, position, 3, false, false);
+				CheckObstacleVertically(m_ValidMoves, position, 3, false, false);
 			}
 			else
 			{
-				if (position.y >= 6)
+				// Need to make sure we setup queening
+				if (position.y <= 6)
 				{
-					auto& piece = m_Board[position.x][position.y + 1];
+					const Position newPos{ position.x, static_cast<uint8_t>(position.y + 1) };
+					const auto& piece = m_Board[newPos.x][newPos.y];
 					if (piece.type == PieceType_Blank)
 					{
-						Position newPos{ position.x, position.y + 1 };
-						validMoves.push_back(newPos);
+						
+						m_ValidMoves.push_back(newPos);
 					}
 				}
 			}
 		}
 
-		return validMoves;
+		return m_ValidMoves;
 	}
 
-	std::vector<Position> Engine::ValidMovesKnight(const Position& position)
+	const std::vector<Position>& Engine::ValidMovesKnight(const Position& position)
 	{
-		return {};
+		m_ValidMoves.clear();
+		return m_ValidMoves;
 	}
 
-	std::vector<Position> Engine::ValidMovesBishop(const Position& position)
+	const std::vector<Position>& Engine::ValidMovesBishop(const Position& position)
 	{
-		return {};
+		m_ValidMoves.clear();
+		return m_ValidMoves;
 	}
 
-	std::vector<Position> Engine::ValidMovesQueen(const Position& position)
+	const std::vector<Position>& Engine::ValidMovesQueen(const Position& position)
 	{
-		return {};
+		m_ValidMoves.clear();
+		return m_ValidMoves;
 	}
 
-	std::vector<Position> Engine::ValidMovesKing(const Position& position)
+	const std::vector<Position>& Engine::ValidMovesKing(const Position& position)
 	{
-		return {};
+		m_ValidMoves.clear();
+		return m_ValidMoves;
 	}
 
-	std::vector<Position> Engine::ValidMovesRook(const Position& position)
+	const std::vector<Position>& Engine::ValidMovesRook(const Position& position)
 	{
-		return {};
+		m_ValidMoves.clear();
+
+		CheckObstacleHorizontally(m_ValidMoves, position, 8, true, true);
+		CheckObstacleVertically(m_ValidMoves, position, 8, true, true);
+
+		return m_ValidMoves;
 	}
 
 }
