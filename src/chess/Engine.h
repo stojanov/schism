@@ -29,6 +29,8 @@ namespace Chess
 		void CheckObstacleHorizontally(std::vector<Position>& validMoves, const Position& position, 
 			uint8_t length, bool canTake, bool descending) const;
 
+		void CheckObstacleDiagonally(std::vector<Position>& validMoves, const Position& position);
+
 		[[nodiscard]] const std::vector<Position>& ValidMovesPawn(const Position& position);
 		[[nodiscard]] const std::vector<Position>& ValidMovesKnight(const Position& position);
 		[[nodiscard]] const std::vector<Position>& ValidMovesBishop(const Position& position);

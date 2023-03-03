@@ -115,7 +115,7 @@ namespace Chess
 		}
 	}
 
-	bool Engine::CheckObstacle(std::vector<Position>& validMoves, const Piece& myPiece, const Position& position, bool canTake) const
+	inline bool Engine::CheckObstacle(std::vector<Position>& validMoves, const Piece& myPiece, const Position& position, bool canTake) const
 	{
 		if (position.y >= m_Board.size() ||
 			position.x >= m_Board.size())
@@ -132,7 +132,7 @@ namespace Chess
 			return false; // Stop if we find a valid piece to take
 		}
 
-		if (IsValidPiece(piece.type) && piece.color != InvertPieceColor(piece.color))
+		if (IsValidPiece(piece.type) && piece.color != InvertPieceColor(myPiece.color))
 		{
 			return false;
 		}
@@ -145,6 +145,7 @@ namespace Chess
 
 	void Engine::CheckObstacleVertically(std::vector<Position>& validMoves, const Position& position, uint8_t length, bool canTake, bool descending) const
 	{
+		// Make this into a single loop
 		const auto& myPiece = m_Board[position.x][position.y];
 		for (uint8_t y = position.y + 1; y <= static_cast<uint8_t>(position.y + (length - 1)); y++)
 		{
@@ -168,7 +169,8 @@ namespace Chess
 	}
 
 	void Engine::CheckObstacleHorizontally(std::vector<Position>& validMoves, const Position& position, uint8_t length, bool canTake, bool descending) const
-	{
+	
+	{	// Make this into a single loop, can be optimized
 		const auto& myPiece = m_Board[position.x][position.y];
 		for (uint8_t x = position.x + 1; x <= static_cast<uint8_t>(position.x + (length - 1)); x++)
 		{
@@ -187,6 +189,62 @@ namespace Chess
 				{
 					break;
 				}
+			}
+		}
+	}
+
+	void Engine::CheckObstacleDiagonally(std::vector<Position>& validMoves, const Position& position)
+	{
+		const auto& myPiece = m_Board[position.x][position.y];
+
+		bool rightDiagonalAscending = true;
+		bool rightDiagonalDescending = true;
+		bool leftDiagonalAscending = true;
+		bool leftDiagonalDescending = true;
+		
+		uint8_t count = 0;
+
+		for (uint8_t i = 1; i < 16; i++)
+		{
+			if (rightDiagonalAscending)
+			{
+				const Position newPosition{
+					static_cast<uint8_t>(position.x + i),
+					static_cast<uint8_t>(position.y + i)
+				};
+				rightDiagonalAscending  = CheckObstacle(validMoves, myPiece, newPosition, true);
+				count++;
+			}
+			if (leftDiagonalDescending)
+			{
+				const Position newPosition{
+					static_cast<uint8_t>(position.x - i),
+					static_cast<uint8_t>(position.y - i)
+				};
+				leftDiagonalDescending = CheckObstacle(validMoves, myPiece, newPosition, true);
+				count++;
+			}
+			if (leftDiagonalAscending)
+			{
+				const Position newPosition{
+					static_cast<uint8_t>(position.x - i),
+					static_cast<uint8_t>(position.y + i)
+				};
+				leftDiagonalAscending = CheckObstacle(validMoves, myPiece, newPosition, true);
+				count++;
+			}
+			if (rightDiagonalDescending)
+			{
+				const Position newPosition{
+					static_cast<uint8_t>(position.x + i),
+					static_cast<uint8_t>(position.y - i)
+				};
+				rightDiagonalDescending = CheckObstacle(validMoves, myPiece, newPosition, true);
+				count++;
+			}
+			if (count == 0)
+			{
+				break;
 			}
 		}
 	}
@@ -308,24 +366,78 @@ namespace Chess
 	const std::vector<Position>& Engine::ValidMovesKnight(const Position& position)
 	{
 		m_ValidMoves.clear();
+
+		const auto& myPiece = m_Board[position.x][position.y];
+
+		const Position topRight_1{
+			static_cast<uint8_t>(position.x + 2),
+			static_cast<uint8_t>(position.y - 1)
+		};
+		const Position topRight_2{
+			static_cast<uint8_t>(position.x + 1),
+			static_cast<uint8_t>(position.y - 2)
+		};
+		const Position bottRight_1 {
+			static_cast<uint8_t>(position.x + 2),
+			static_cast<uint8_t>(position.y + 1)
+		};
+		const Position bottRight_2{
+			static_cast<uint8_t>(position.x + 1),
+			static_cast<uint8_t>(position.y + 2)
+		};
+		const Position topLeft_1{
+			static_cast<uint8_t>(position.x - 2),
+			static_cast<uint8_t>(position.y - 1)
+		};
+		const Position topLeft_2{
+			static_cast<uint8_t>(position.x - 1),
+			static_cast<uint8_t>(position.y - 2)
+		};
+		const Position bottLeft_1{
+			static_cast<uint8_t>(position.x - 2),
+			static_cast<uint8_t>(position.y + 1)
+		};
+		const Position bottLeft_2{
+			static_cast<uint8_t>(position.x - 1),
+			static_cast<uint8_t>(position.y + 2)
+		};
+
+		CheckObstacle(m_ValidMoves, myPiece, topRight_1, true);
+		CheckObstacle(m_ValidMoves, myPiece, bottRight_1, true);
+		CheckObstacle(m_ValidMoves, myPiece, topRight_2, true);
+		CheckObstacle(m_ValidMoves, myPiece, bottRight_2, true);
+		CheckObstacle(m_ValidMoves, myPiece, topLeft_1, true);
+		CheckObstacle(m_ValidMoves, myPiece, bottLeft_1, true);
+		CheckObstacle(m_ValidMoves, myPiece, topLeft_2, true);
+		CheckObstacle(m_ValidMoves, myPiece, bottLeft_2, true);
+
 		return m_ValidMoves;
 	}
 
 	const std::vector<Position>& Engine::ValidMovesBishop(const Position& position)
 	{
 		m_ValidMoves.clear();
+
+		CheckObstacleDiagonally(m_ValidMoves, position);
+
 		return m_ValidMoves;
 	}
 
 	const std::vector<Position>& Engine::ValidMovesQueen(const Position& position)
 	{
 		m_ValidMoves.clear();
+
+		CheckObstacleDiagonally(m_ValidMoves, position);
+		CheckObstacleHorizontally(m_ValidMoves, position, 8, true, true);
+		CheckObstacleVertically(m_ValidMoves, position, 8, true, true);
+
 		return m_ValidMoves;
 	}
 
 	const std::vector<Position>& Engine::ValidMovesKing(const Position& position)
 	{
 		m_ValidMoves.clear();
+
 		return m_ValidMoves;
 	}
 
