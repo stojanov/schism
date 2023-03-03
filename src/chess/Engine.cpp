@@ -115,7 +115,7 @@ namespace Chess
 		}
 	}
 
-	bool Engine::CheckObstacle(std::vector<Position>& validMoves, const Position& position, bool canTake) const
+	bool Engine::CheckObstacle(std::vector<Position>& validMoves, const Piece& myPiece, const Position& position, bool canTake) const
 	{
 		if (position.y >= m_Board.size() ||
 			position.x >= m_Board.size())
@@ -126,10 +126,9 @@ namespace Chess
 
 		if (canTake &&
 			IsValidPiece(piece.type) &&
-			piece.color == InvertPieceColor(piece.color))
+			piece.color == InvertPieceColor(myPiece.color))
 		{
 			validMoves.push_back(position);
-			SC_CORE_INFO("FOUND TAKING PIECE");
 			return false; // Stop if we find a valid piece to take
 		}
 
@@ -146,9 +145,10 @@ namespace Chess
 
 	void Engine::CheckObstacleVertically(std::vector<Position>& validMoves, const Position& position, uint8_t length, bool canTake, bool descending) const
 	{
+		const auto& myPiece = m_Board[position.x][position.y];
 		for (uint8_t y = position.y + 1; y <= static_cast<uint8_t>(position.y + (length - 1)); y++)
 		{
-			if (!CheckObstacle(validMoves, {position.x, y}, canTake))
+			if (!CheckObstacle(validMoves, myPiece, {position.x, y}, canTake))
 			{
 				break;
 			}
@@ -159,7 +159,7 @@ namespace Chess
 			const uint8_t yLimit = (length - 1) > position.y ? 0 : static_cast<uint8_t>(position.y - (length - 1));
 			for (uint8_t y = position.y - 1; y >= yLimit; y--)
 			{
-				if (!CheckObstacle(validMoves, { position.x, y }, canTake))
+				if (!CheckObstacle(validMoves, myPiece, { position.x, y }, canTake))
 				{
 					break;
 				}
@@ -169,9 +169,10 @@ namespace Chess
 
 	void Engine::CheckObstacleHorizontally(std::vector<Position>& validMoves, const Position& position, uint8_t length, bool canTake, bool descending) const
 	{
+		const auto& myPiece = m_Board[position.x][position.y];
 		for (uint8_t x = position.x + 1; x <= static_cast<uint8_t>(position.x + (length - 1)); x++)
 		{
-			if (!CheckObstacle(validMoves, { x, position.y }, canTake))
+			if (!CheckObstacle(validMoves, myPiece, { x, position.y }, canTake))
 			{
 				break;
 			}
@@ -182,7 +183,7 @@ namespace Chess
 			const uint8_t xLimit = (length - 1) > position.x ? 0 : static_cast<uint8_t>(position.x - (length - 1));
 			for (uint8_t x = position.x - 1; x >= xLimit; x--)
 			{
-				if (!CheckObstacle(validMoves, { x , position.y }, canTake))
+				if (!CheckObstacle(validMoves, myPiece, { x , position.y }, canTake))
 				{
 					break;
 				}

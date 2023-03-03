@@ -21,7 +21,7 @@ namespace Chess
 	private:
 		std::vector<Position> m_ValidMoves;
 
-		bool CheckObstacle(std::vector<Position>& validMoves, const Position& position, bool canTake) const;
+		bool CheckObstacle(std::vector<Position>& validMoves, const Piece& myPiece, const Position& position, bool canTake) const;
 
 		void CheckObstacleVertically(std::vector<Position>& validMoves, const Position& position, 
 			uint8_t length, bool canTake, bool descending) const;
