@@ -26,7 +26,7 @@ namespace Chess
 		m_Offset = static_cast<float>(m_Width) * offsetPercentage;
 	}
 
-	void BoardRenderer::DrawValidMoves(std::vector<Position>& validMoves)
+	void BoardRenderer::DrawValidMoves(const std::vector<Position>& validMoves)
 	{
 		static Schism::Components::Transform2D transform;
 

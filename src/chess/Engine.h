@@ -13,7 +13,7 @@ namespace Chess
 		Engine();
 		void Reset();
 		bool MakeMove(const Move& move);
-		std::optional<std::vector<Position>> GetValidMoves(const Position& position);
+		const std::vector<Position>& GetValidMoves(const Position& position);
 		const Board& GetBoardState() const
 		{
 			return m_Board; 
@@ -29,7 +29,7 @@ namespace Chess
 		void CheckObstacleHorizontally(std::vector<Position>& validMoves, const Position& position, 
 			uint8_t length, bool canTake, bool descending) const;
 
-		void CheckObstacleDiagonally(std::vector<Position>& validMoves, const Position& position);
+		void CheckObstacleDiagonally(std::vector<Position>&  validMoves, const Position& position);
 
 		[[nodiscard]] const std::vector<Position>& ValidMovesPawn(const Position& position);
 		[[nodiscard]] const std::vector<Position>& ValidMovesKnight(const Position& position);

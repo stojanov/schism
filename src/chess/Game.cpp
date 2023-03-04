@@ -35,6 +35,11 @@ namespace Chess
 
 			auto selectPiece = [&](const auto& position)
 			{
+				if (position == m_State.selectedPosition)
+				{
+					return;
+				}
+
 				m_State.pieceSelected = true;
 				m_State.selectedPosition = position;
 
@@ -46,9 +51,9 @@ namespace Chess
 				{
 					m_ValidMoves = m_Engine.GetValidMoves(position);
 				}
-				if (m_ValidMoves)
+				if (!m_ValidMoves.empty())
 				{
-					SC_CORE_INFO("Valid moves count {}", m_ValidMoves->size());
+					SC_CORE_INFO("Valid move count {0}", m_ValidMoves.size());
 				}
 			};
 
@@ -68,7 +73,7 @@ namespace Chess
 				m.currentPosition = boardPosition;
 				m.prevPosition = m_State.selectedPosition;
 				m_State.pieceSelected = false;
-				m_ValidMoves = std::nullopt;
+				m_ValidMoves = {};
 
 				m_Engine.MakeMove(m); // Temporary
 
@@ -91,9 +96,9 @@ namespace Chess
 
 	void Game::DrawBoard()
 	{
-		if (m_ValidMoves)
+		if (!m_ValidMoves.empty())
 		{
-			m_BoardRenderer.DrawValidMoves(*m_ValidMoves);
+			m_BoardRenderer.DrawValidMoves(m_ValidMoves);
 		}
 		m_BoardRenderer.DrawBoard(m_Engine.GetBoardState(), !m_State.isWhite);
 	}

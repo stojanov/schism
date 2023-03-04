@@ -25,7 +25,7 @@ namespace Chess
 		void Init(Resources&& sprites, uint16_t width, uint16_t height,
 			float pieceSize, float offsetPercentage);
 
-		void DrawValidMoves(std::vector<Position>& validMoves);
+		void DrawValidMoves(const std::vector<Position>& validMoves);
 		
 		void DrawBoard(const Board& board, bool flipped);
 

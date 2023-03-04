@@ -36,7 +36,7 @@ namespace Chess
 		State m_State;
 		Engine m_Engine;
 		BoardRenderer& m_BoardRenderer;
-		std::optional<std::vector<Position>> m_ValidMoves;
+		std::vector<Position> m_ValidMoves;
 		float m_Offset;
 		float m_PieceSize;
 	};
