@@ -8,7 +8,7 @@
 
 namespace Schism
 {
-	using EventCallback = std::function<void(Event& e)>;
+	using EventCallback = std::function<void(Event&& e)>;
 
 	struct InputData
 	{

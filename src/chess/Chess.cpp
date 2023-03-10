@@ -13,7 +13,7 @@ using namespace Schism;
 Chess::Chess(Core::SharedContextRef ctx, const std::string& name)
 	:
 	IScene(ctx, name),
-	m_Camera(0, m_Ctx->Window->GetWidth(), m_Ctx->Window->GetHeight(), 0),
+	m_Camera(0, m_Ctx->window->GetWidth(), m_Ctx->window->GetHeight(), 0),
 	m_Piece(CreateEntity())
 {
 }
@@ -34,7 +34,7 @@ void Chess::OnAttach()
 	auto& transfrom = m_Registry.emplace<Components::Transform2D>(board);
 
 	transfrom.position = { 0.f, 0.f };
-	transfrom.scale = { m_Ctx->Window->GetWidth(), m_Ctx->Window->GetHeight()};
+	transfrom.scale = {m_Ctx->window->GetWidth(), m_Ctx->window->GetHeight()};
 
 	auto& transform2 = m_Piece.AddComponent<Components::Transform2D>();
 
@@ -72,7 +72,7 @@ void Chess::OnDraw()
 
 	for (auto e : view)
 	{
-		auto& [transform, sprite] = m_Registry.get<Components::Transform2D, Components::Sprite>(e);
+		const auto& [transform, sprite] = m_Registry.get<Components::Transform2D, Components::Sprite>(e);
 		SpriteRenderer::Draw(transform, sprite, m_Camera.GetViewProjectionMatrix());
 	}
 

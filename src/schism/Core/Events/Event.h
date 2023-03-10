@@ -11,7 +11,7 @@ namespace Schism
 		WindowResize, WindowClose, WindowFocus
 	};
 
-#define SC_EVENT(type) constexpr EventType GetEventType() const override { return type; } \
+#define SC_EVENT(type) [[nodiscard]] EventType GetEventType() const override { return type; } \
 						static constexpr EventType GetStaticType() { return type; }
 
 	class Event
