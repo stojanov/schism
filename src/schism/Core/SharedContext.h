@@ -14,7 +14,7 @@ namespace Schism::Core
 	
 	struct SharedContext
 	{
-		Ref<Window> Window;
+		Ref<Window> window;
 		Assets GlobalAssets;
 		SceneManagerCallbacks SceneManager;
 	};
@@ -25,7 +25,7 @@ namespace Schism::Core
 	{
 		Ref<SharedContext> Ctx = MakeRef<SharedContext>();
 
-		Ctx->Window = window;
+		Ctx->window = window;
 		return Ctx;
 	}
 	

@@ -16,7 +16,7 @@ namespace Chess
 	Chess::Chess(Core::SharedContextRef ctx, const std::string& name)
 		:
 		IScene(ctx, name),
-		m_Camera(0, m_Ctx->Window->GetWidth(), m_Ctx->Window->GetHeight(), 0),
+		m_Camera(0, m_Ctx->window->GetWidth(), m_Ctx->window->GetHeight(), 0),
 		m_Game{ m_BoardRenderer }
 	{
 		BoardRenderer::Resources sprites;
@@ -37,8 +37,8 @@ namespace Chess
 		sprites.blackSprites[PieceType_Rook].sprite = m_Assets.Textures.Load("BRook", "res/chess/black_rook.png", true);
 		sprites.blackSprites[PieceType_King].sprite = m_Assets.Textures.Load("BKing", "res/chess/black_king.png", true);
 
-		int width = m_Ctx->Window->GetWidth();
-		int height = m_Ctx->Window->GetHeight();
+		int width = m_Ctx->window->GetWidth();
+		int height = m_Ctx->window->GetHeight();
 		float offsetPercentage = 0.32;
 		float pieceSize = (width - (width * offsetPercentage)) / 8;
 

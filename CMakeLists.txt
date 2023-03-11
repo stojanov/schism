@@ -22,6 +22,8 @@ else()
     add_compile_definitions(SC_NODEBUG)
 endif()
 
+add_compile_definitions(IMGUI_IMPL_OPENGL_LOADER_GLAD)
+
 include_directories(
                     vendor/glad/include/
                     vendor/GLFW/include/

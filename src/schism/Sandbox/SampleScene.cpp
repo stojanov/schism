@@ -8,7 +8,7 @@ using namespace Schism;
 SampleScene::SampleScene(Core::SharedContextRef ctx, const std::string& name)
 	:
 	IScene(ctx, name),
-	m_Camera(0, m_Ctx->Window->GetWidth(), m_Ctx->Window->GetHeight(), 0)
+	m_Camera(0, m_Ctx->window->GetWidth(), m_Ctx->window->GetHeight(), 0)
 {
 	m_Ship1 = m_Registry.create();
 }
@@ -56,7 +56,7 @@ void SampleScene::OnDraw()
 
 	for (auto e : view)
 	{
-		auto& [transfrom, sprite] = m_Registry.get<Components::Transform2D, Components::Sprite>(e);
+		const auto& [transfrom, sprite] = m_Registry.get<Components::Transform2D, Components::Sprite>(e);
 		m_Renderer.Draw(transfrom, sprite, m_Camera.GetViewProjectionMatrix());
 	}
 }

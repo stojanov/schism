@@ -21,7 +21,7 @@ namespace Schism
 		Ref<Core::Window> Window = MakeRef<Core::Window>();
 		
 		Window->Create(w, h, name);
-		Window->SetEventCallback([this](Event& e)
+		Window->SetEventCallback([this](Event&& e)
 			{
 				OnEvent(e);
 			});
@@ -75,7 +75,7 @@ namespace Schism
 	void Application::Run()
 	{
 		// Boilerplate code
-		auto winPtr = m_Ctx->Window->GetNativeWindow();
+		auto winPtr = m_Ctx->window->GetNativeWindow();
 		
 		auto StartTime = std::chrono::high_resolution_clock::now();
 		auto LastFrameTime = StartTime;
@@ -89,10 +89,10 @@ namespace Schism
 			ts = ms * 1.f / 1000;
 
 			Renderer::API::Clear();
-			m_Ctx->Window->ProcessEvents();
+			m_Ctx->window->ProcessEvents();
 			m_SceneManager.OnUpdate(ts);
 			m_SceneManager.OnDraw();
-			m_Ctx->Window->Swap();
+			m_Ctx->window->Swap();
 		}
 
 		SC_CORE_INFO("Schism shutting down");

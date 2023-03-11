@@ -3,11 +3,11 @@
 // This should be included when using the engine
 
 #include "GLFW/glfw3.h"
-#include "Schism/Core/Application.h"
-#include "Schism/Sandbox/Sandbox.h"
-#include "Schism/System/System.h"
-#include "Schism/Renderer/Renderer2D.h"
-#include "Schism/Renderer/SpriteRenderer.h"
+#include "schism/Core/Application.h"
+#include "schism/Sandbox/Sandbox.h"
+#include "schism/System/System.h"
+#include "schism/Renderer/Renderer2D.h"
+#include "schism/Renderer/SpriteRenderer.h"
 
 namespace Schism
 {
