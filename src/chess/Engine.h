@@ -13,8 +13,8 @@ namespace Chess
 		Engine();
 		void Reset();
 		bool MakeMove(const Move& move);
-		const std::vector<Position>& GetValidMoves(const Position& position);
-		const Board& GetBoardState() const
+		[[nodiscard]] const std::vector<Position>& GetValidMoves(const Position& position);
+		[[nodiscard]] const Board& GetBoardState() const
 		{
 			return m_Board; 
 		}

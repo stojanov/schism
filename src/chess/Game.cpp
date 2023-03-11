@@ -1,6 +1,7 @@
 #include "Game.h"
 
 #include "schism/Core/Events/MouseEvents.h"
+#include "schism/Game/GameEvent/Bus.h"
 
 namespace Chess
 {
@@ -8,7 +9,6 @@ namespace Chess
 		:
 		m_BoardRenderer{ renderer }
 	{
-
 	}
 
 	void Game::ProcessInput(Schism::Event& e)

@@ -80,11 +80,10 @@ namespace Chess
 		m_ValidMoves.clear();
 		if (position.x >= m_Board.size() || position.y >= m_Board.size())
 		{
-			
 			return m_ValidMoves;
 		}
 
-		auto& piece = m_Board[position.x][position.y];
+		const auto& piece = m_Board[position.x][position.y];
 
 		switch (piece.type)
 		{
