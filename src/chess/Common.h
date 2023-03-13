@@ -1,10 +1,11 @@
 #pragma once
 
 #include <array>
+#include <cstdint>
 
 namespace Chess
 {
-	enum PieceType: uint8_t
+	enum PieceType
 	{
 		PieceType_Pawn = 0,
 		PieceType_Knight,
@@ -16,7 +17,7 @@ namespace Chess
 		PieceType_Blank,
 	};
 
-	enum PieceColor: uint8_t
+	enum PieceColor
 	{
 		PieceColor_Black = 0,
 		PieceColor_White
