@@ -34,6 +34,7 @@ include_directories(
                     vendor/stb/
                     vendor/json/include/
                     vendor/phmap/parallel_hashmap/
+                    vendor/atomic_queue/include/
                     src/)
 
 file(GLOB STB_SRC vendor/stb/*.c)

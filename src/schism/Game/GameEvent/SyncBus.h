@@ -8,11 +8,11 @@
 #include <any>
 #include <type_traits>
 #include <memory>
-#include "Listener.h"
+#include "SyncListener.h"
 
 namespace Schism::GameEvent
 {
-	class Bus
+	class SyncBus
 	{
 	public:
 		template<typename T>
@@ -46,11 +46,16 @@ namespace Schism::GameEvent
 		template<typename T>
 		void AttachListener(const std::shared_ptr<T>& listener)
 		{
-			static_assert(std::is_base_of_v<Listener, T>, "(Bus, AttachListener) T is not of base Listener type");
+			static_assert(std::is_base_of_v<SyncListener, T>, "(SyncBus, AttachListener) T is not of base SyncListener type");
 
-			m_Listeners.emplace_back(std::dynamic_pointer_cast<Listener>(listener));
+			m_Listeners.emplace_back(std::dynamic_pointer_cast<SyncListener>(listener));
 		}
+
+        void AttachListener(const std::shared_ptr<SyncListener>& listener)
+        {
+            m_Listeners.emplace_back(listener);
+        }
 	private:
-		std::vector<std::shared_ptr<Listener>> m_Listeners;
+		std::vector<std::shared_ptr<SyncListener>> m_Listeners;
 	};
 }

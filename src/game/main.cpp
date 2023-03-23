@@ -1,8 +1,8 @@
 #include "schism/Schism.h"
 #include "Game.h"
-#include "schism/Game/GameEvent/Bus.h"
-
-
+#include "schism/Game/GameEvent/SyncListener.h"
+#include "schism/Game/GameEvent/SyncBus.h"
+#include "schism/Game/GameEvent/CallbackListener.h"
 struct AddNumbers
 {
 	int a;
@@ -16,22 +16,21 @@ struct DecNumbers
 };
 
 class MyListener:
-	public Schism::GameEvent::Listener,
+    public Schism::GameEvent::SyncListener,
 	public std::enable_shared_from_this<MyListener>
 {
 public:
 	void Init()
 	{
-		RegisterGameEvent<AddNumbers>();
+		//RegisterGameEvent<AddNumbers>();
 		RegisterGameEvent<DecNumbers>();
 	}
 
-	void Run()
-	{
-		auto e = ListenGameEvent<AddNumbers>();
+    void OnEvent(AddNumbers&& e)
+    {
 
-		std::cout << "Got event a: " << e.a << " " << e.b << "\n";
-	}
+    }
+
 
 	std::shared_ptr<MyListener> PTR()
 	{
@@ -46,10 +45,10 @@ int main(int argc, char* argv[])
 	
 	//app.Run();
 
-	Schism::GameEvent::Bus eventBus;
+	Schism::GameEvent::SyncBus eventBus;
 
 	std::shared_ptr<MyListener> listener = std::make_shared<MyListener>();
-
+    Schism::GameEvent::CallbackListener cbListener;
 	eventBus.AttachListener(listener->PTR());
 
 	std::thread th([&listener]()
@@ -58,7 +57,6 @@ int main(int argc, char* argv[])
 
 			while (true)
 			{
-				listener->Run();
 			}
 		});
 

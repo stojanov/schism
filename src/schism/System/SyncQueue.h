@@ -137,6 +137,44 @@ namespace Schism::System
 			return result;
 		}
 
+        template<bool ShouldLockOnLoop = false> // True only if functor is a function that takes a long time
+        void Drain(typename std::queue<T>::size_type count, std::function<void(T&&)> functor)
+        {
+            if constexpr (!ShouldLockOnLoop)
+            {
+                std::scoped_lock lck(m_Mutex);
+
+                if (count > m_Queue.size())
+                {
+                    return; // Log out error
+                }
+
+                for (typename std::queue<T>::size_type i = 0; i < count; i++)
+                {
+                    T obj = m_Queue.front();
+                    m_Queue.pop();
+                    functor(std::move(obj));
+                }
+            }
+            else
+            {
+                for (typename std::queue<T>::size_type i = 0; i < count; i++)
+                {
+                    std::scoped_lock lck(m_Mutex);
+
+                    if (m_Queue.size() < 1)
+                    {
+                        continue;
+                    }
+
+                    T obj = m_Queue.front();
+                    m_Queue.pop();
+                    functor(std::move(obj));
+                }
+            }
+
+        }
+
 		typename std::queue<T>::size_type Size()
 		{
 			std::scoped_lock lck(m_Mutex);

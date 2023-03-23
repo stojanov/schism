@@ -1,7 +1,7 @@
 #include "Game.h"
 
 #include "schism/Core/Events/MouseEvents.h"
-#include "schism/Game/GameEvent/Bus.h"
+#include "schism/Game/GameEvent/SyncBus.h"
 
 namespace Chess
 {
