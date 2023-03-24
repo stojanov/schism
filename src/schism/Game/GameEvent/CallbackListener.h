@@ -21,7 +21,7 @@ namespace Schism::GameEvent
         void RegisterGameEvent()
         {
             m_QueueMap[typeid(T)] = std::make_unique<Queue>();
-            //m_CallbackMap[typeid(T)];
+            m_CallbackMap[typeid(T)];
         }
 
         template<typename T>
@@ -41,19 +41,12 @@ namespace Schism::GameEvent
         {
             if (auto queueIt = m_QueueMap.find(typeid(T)); queueIt != m_QueueMap.end())
             {
-                if (auto callbackIt = m_CallbackMap.find(typeid(T)); callbackIt != m_CallbackMap.end())
-                {
-                    auto callback = std::any_cast<EventCallback<T>>(callbackIt->second);
+                auto callback = std::any_cast<EventCallback<T>>(m_CallbackMap[typeid(T)]);
 
-                    queueIt->second->Drain(5, [&callback](std::any&& e)
-                    {
-                        callback(std::any_cast<T>(e));
-                    });
-                }
-                else
+                queueIt->second->Drain(5, [&callback](std::any&& e)
                 {
-                    SC_CORE_WARN("(CallbackListener::Process) EventCallback not registered");
-                }
+                    callback(std::any_cast<T>(e));
+                });
             }
             else
             {
