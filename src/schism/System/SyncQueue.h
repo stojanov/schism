@@ -144,13 +144,17 @@ namespace Schism::System
             {
                 std::scoped_lock lck(m_Mutex);
 
-                if (count > m_Queue.size())
+                if (m_Queue.empty())
                 {
                     return; // Log out error
                 }
 
                 for (typename std::queue<T>::size_type i = 0; i < count; i++)
                 {
+                    if (m_Queue.size() < 1)
+                    {
+                        return;
+                    }
                     T obj = m_Queue.front();
                     m_Queue.pop();
                     functor(std::move(obj));

@@ -1,13 +1,7 @@
 #pragma once
 
-#include <unordered_map>
-#include <mutex>
-#include <condition_variable>
-#include <queue>
-#include <typeindex>
-#include <any>
-#include <type_traits>
 #include <memory>
+#include <vector>
 #include "SyncListener.h"
 
 namespace Schism::GameEvent

@@ -3,6 +3,8 @@
 #include "schism/Game/GameEvent/SyncListener.h"
 #include "schism/Game/GameEvent/SyncBus.h"
 #include "schism/Game/GameEvent/CallbackListener.h"
+#include "schism/Game/GameEvent/CallbackBus.h"
+
 struct AddNumbers
 {
 	int a;
@@ -15,29 +17,6 @@ struct DecNumbers
 	int b;
 };
 
-class MyListener:
-    public Schism::GameEvent::SyncListener,
-	public std::enable_shared_from_this<MyListener>
-{
-public:
-	void Init()
-	{
-		//RegisterGameEvent<AddNumbers>();
-		RegisterGameEvent<DecNumbers>();
-	}
-
-    void OnEvent(AddNumbers&& e)
-    {
-
-    }
-
-
-	std::shared_ptr<MyListener> PTR()
-	{
-		return shared_from_this();
-	}
-};
-
 int main(int argc, char* argv[])
 {
 	Schism::Init();
@@ -45,27 +24,30 @@ int main(int argc, char* argv[])
 	
 	//app.Run();
 
-	Schism::GameEvent::SyncBus eventBus;
+	Schism::GameEvent::CallbackBus eventBus;
 
-	std::shared_ptr<MyListener> listener = std::make_shared<MyListener>();
-    Schism::GameEvent::CallbackListener cbListener;
-	eventBus.AttachListener(listener->PTR());
+	std::shared_ptr<Schism::GameEvent::CallbackListener> listener = std::make_shared<Schism::GameEvent::CallbackListener>();
+	eventBus.AttachListener(listener);
 
-	std::thread th([&listener]()
+    listener->RegisterGameEvent<AddNumbers>();
+    listener->ListenGameEvent<AddNumbers>([](AddNumbers&& e)
+    {
+        std::cout << e.a << " " << e.b << "\n";
+    });
+	std::thread th([&eventBus]()
 		{
-			listener->Init();
-
-			while (true)
-			{
-			}
+            int a = 0;
+            int b = 0;
+            while (true)
+            {
+                eventBus.PostEvent(AddNumbers{ a++, b++ });
+                std::this_thread::sleep_for(std::chrono::milliseconds(500));
+            }
 		});
-
-	int a = 0;
-	int b = 0;
+    
 	while (true)
 	{
-
-		eventBus.PostEvent(AddNumbers{ a++, b++ });
-		std::this_thread::sleep_for(std::chrono::milliseconds(50));
+        listener->Process<AddNumbers>();
+        std::this_thread::sleep_for(std::chrono::milliseconds(16));
 	}
 }

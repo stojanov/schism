@@ -5,6 +5,8 @@
 namespace Chess
 {
 	Engine::Engine()
+    :
+    m_TurnWhite{ true }
 	{
 		Reset();
 	}
@@ -49,6 +51,12 @@ namespace Chess
 		const auto piece = m_Board[move.prevPosition.x][move.prevPosition.y];
 		const auto nextPiece = m_Board[move.currentPosition.x][move.currentPosition.y];
 
+        if (!(m_TurnWhite && piece.color == PieceColor_White)
+            && !(!m_TurnWhite && piece.color == PieceColor_Black)
+        )
+        {
+            return false;
+        }
 		// Check if we want to move to another piece by the same color
 		if (move.piece.color == nextPiece.color && nextPiece.type != PieceType_Blank)
 		{
@@ -71,6 +79,8 @@ namespace Chess
 				return true;
 			}
 		}
+
+        m_TurnWhite = !m_TurnWhite;
 
 		return true;
 	}

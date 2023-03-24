@@ -40,5 +40,6 @@ namespace Chess
 
 
 		Board m_Board;
+        bool m_TurnWhite;
 	};
 }

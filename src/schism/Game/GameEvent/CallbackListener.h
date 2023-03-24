@@ -9,6 +9,7 @@
 
 namespace Schism::GameEvent
 {
+    class CallbackBus;
     class CallbackListener
     {
         template<typename T>
@@ -19,8 +20,8 @@ namespace Schism::GameEvent
         template<typename T>
         void RegisterGameEvent()
         {
-            m_QueueMap[typeid(T)];
-            m_CallbackMap[typeid(T)];
+            m_QueueMap[typeid(T)] = std::make_unique<Queue>();
+            //m_CallbackMap[typeid(T)];
         }
 
         template<typename T>
@@ -44,10 +45,9 @@ namespace Schism::GameEvent
                 {
                     auto callback = std::any_cast<EventCallback<T>>(callbackIt->second);
 
-                    queueIt->second.Drain(5, [&callback](std::any&& e)
+                    queueIt->second->Drain(5, [&callback](std::any&& e)
                     {
-                        auto event = std::any_cast<T>(e);
-                        callback(event);
+                        callback(std::any_cast<T>(e));
                     });
                 }
                 else
@@ -61,12 +61,14 @@ namespace Schism::GameEvent
             }
         }
     private:
+        friend CallbackBus;
+
         template<typename T>
         void ProduceGameEvent(T&& o)
         {
             if (auto i = m_QueueMap.find(typeid(T)); i != m_QueueMap.end())
             {
-                i->second.Push(std::forward<T>(o));
+                i->second->Push(std::forward<T>(o));
                 return;
             }
             SC_CORE_WARN("(CallbackListener) ProduceGameEvent: type not found");
@@ -77,13 +79,13 @@ namespace Schism::GameEvent
         {
             if (auto i = m_QueueMap.find(typeid(T)); i != m_QueueMap.end())
             {
-                i->second.Push(o);
+                i->second->Push(o);
                 return;
             }
             SC_CORE_WARN("(CallbackListener) ProduceGameEvent: type not found");
         }
 
-        phmap::parallel_flat_hash_map<std::type_index, Queue> m_QueueMap;
+        phmap::parallel_flat_hash_map<std::type_index, std::unique_ptr<Queue>> m_QueueMap;
         phmap::parallel_flat_hash_map<std::type_index, std::any> m_CallbackMap;
     };
 }
