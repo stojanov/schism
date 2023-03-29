@@ -2,7 +2,7 @@
 
 #include <array>
 #include <cstdint>
-
+#include "msgpack/msgpack.hpp"
 namespace Chess
 {
 	enum PieceType
@@ -25,8 +25,14 @@ namespace Chess
 
 	struct Piece
 	{
-		PieceType type{ PieceType_Blank };
-		PieceColor color{ PieceColor_White };
+		uint8_t type{ PieceType_Blank };
+        uint8_t color{ PieceColor_White };
+
+        template<typename T>
+        void pack(T& p)
+        {
+            p(type, color);
+        }
 	};
 
 	struct Position
@@ -38,13 +44,25 @@ namespace Chess
 		{
 			return x == rhs.x && y == rhs.y;
 		}
+
+        template<typename T>
+        void pack(T& p)
+        {
+            p(x, y);
+        }
 	}; 
 
 	struct Move
 	{
-		Piece piece{ PieceType_Blank }; // Might be useless
+        Piece piece{PieceType_Blank }; // Might be useless
 		Position currentPosition;
 		Position prevPosition;
+
+        template<typename T>
+        void pack(T& p)
+        {
+            p(piece, currentPosition, prevPosition);
+        }
 	};
 
 	using Board = std::array<std::array<Piece, 8>, 8>;
@@ -54,12 +72,12 @@ namespace Chess
 		return { (uint8_t)(7 - pos.x), (uint8_t)(7 - pos.y) };
 	}
 
-	inline bool IsValidPiece(PieceType type)
+	inline bool IsValidPiece(uint8_t type)
 	{
 		return (type != PieceType_Count) && (type != PieceType_Blank);
 	}
 
-	inline PieceColor InvertPieceColor(PieceColor color)
+	inline uint8_t InvertPieceColor(uint8_t color)
 	{
 		return color == PieceColor_White ? PieceColor_Black : PieceColor_White;
 	}

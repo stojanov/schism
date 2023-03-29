@@ -1,7 +1,7 @@
 #include "Game.h"
 
 #include "schism/Core/Events/MouseEvents.h"
-#include "schism/Game/GameEvent/SyncBus.h"
+#include "ChessEvents.h"
 
 namespace Chess
 {
@@ -9,6 +9,25 @@ namespace Chess
 		:
 		m_BoardRenderer{ renderer }
 	{
+        RegisterGameEvent<Move>();
+        RegisterGameEvent<ResetGame>();
+        RegisterGameEvent<StartGame>();
+
+        ListenGameEvent<Move>([this](Move&& m)
+          {
+            m_Engine.MakeMove(m);
+          });
+
+        ListenGameEvent<ResetGame>([this](ResetGame&& e)
+           {
+                m_Engine.Reset();
+           });
+
+        ListenGameEvent<StartGame>([this](StartGame&& e)
+           {
+                m_State.isWhite = e.IsWhite;
+                m_Engine.Reset();
+           });
 	}
 
 	void Game::ProcessInput(Schism::Event& e)
@@ -94,6 +113,11 @@ namespace Chess
 		}
 	}
 
+    void Game::Update()
+    {
+        ProcessGameEvent();
+    }
+
 	void Game::DrawBoard()
 	{
 		if (!m_ValidMoves.empty())
@@ -102,4 +126,6 @@ namespace Chess
 		}
 		m_BoardRenderer.DrawBoard(m_Engine.GetBoardState(), !m_State.isWhite);
 	}
+
+
 }

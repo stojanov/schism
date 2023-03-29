@@ -12,11 +12,11 @@ namespace Schism::GameEvent
     class CallbackBus;
     class CallbackListener
     {
+        using Queue = System::SyncQueue<std::any>;
+    public:
         template<typename T>
         using EventCallback = std::function<void(T&&)>;
 
-        using Queue = System::SyncQueue<std::any>;
-    public:
         template<typename T>
         void RegisterGameEvent()
         {
@@ -39,12 +39,12 @@ namespace Schism::GameEvent
             };
         }
 
-        void Process()
+        void ProcessGameEvent(size_t count = 5)
         {
             for (auto& i : m_QueueMap)
             {
                 auto& callback = m_CallbackMap[i.first];
-                i.second->Drain(5, callback);
+                i.second->Drain(count, callback);
             }
         }
     private:

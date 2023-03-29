@@ -3,16 +3,18 @@
 #include "Common.h"
 #include "BoardRenderer.h"
 #include "Engine.h"
+#include "schism/Game/GameEvent/CallbackListener.h"
 
 namespace Chess
 {
 	// Will handle everything from networking to input processing
-	class Game
+    class Game: public Schism::GameEvent::CallbackListener
 	{
 	public:
-		Game(BoardRenderer& renderer);
+		explicit Game(BoardRenderer& renderer);
 
 		void ProcessInput(Schism::Event& e);
+        void Update();
 		void DrawBoard();
 	private:
 		struct State

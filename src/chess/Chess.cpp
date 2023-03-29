@@ -73,6 +73,7 @@ namespace Chess
 
 	void Chess::OnUpdate(Timestep ts)
 	{
+
 	}
 
 	void Chess::OnDraw()
