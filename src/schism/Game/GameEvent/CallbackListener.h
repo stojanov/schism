@@ -33,24 +33,18 @@ namespace Schism::GameEvent
         template<typename T>
         void ListenGameEvent(EventCallback<T>&& eventFunction)
         {
-            m_CallbackMap[typeid(T)] = std::move(eventFunction);
+            m_CallbackMap[typeid(T)] = [functor = std::move(eventFunction)](std::any ev)
+            {
+                functor(std::any_cast<T>(ev));
+            };
         }
 
-        template<typename T>
         void Process()
         {
-            if (auto queueIt = m_QueueMap.find(typeid(T)); queueIt != m_QueueMap.end())
+            for (auto& i : m_QueueMap)
             {
-                auto callback = std::any_cast<EventCallback<T>>(m_CallbackMap[typeid(T)]);
-
-                queueIt->second->Drain(5, [&callback](std::any&& e)
-                {
-                    callback(std::any_cast<T>(e));
-                });
-            }
-            else
-            {
-                SC_CORE_WARN("(CallbackListener::Process) Event not registered");
+                auto& callback = m_CallbackMap[i.first];
+                i.second->Drain(5, callback);
             }
         }
     private:
@@ -79,6 +73,6 @@ namespace Schism::GameEvent
         }
 
         phmap::parallel_flat_hash_map<std::type_index, std::unique_ptr<Queue>> m_QueueMap;
-        phmap::parallel_flat_hash_map<std::type_index, std::any> m_CallbackMap;
+        phmap::parallel_flat_hash_map<std::type_index, std::function<void(std::any)>> m_CallbackMap;
     };
 }

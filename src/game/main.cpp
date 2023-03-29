@@ -47,7 +47,7 @@ int main(int argc, char* argv[])
     
 	while (true)
 	{
-        listener->Process<AddNumbers>();
+        listener->Process();
         std::this_thread::sleep_for(std::chrono::milliseconds(16));
 	}
 }
