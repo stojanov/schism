@@ -41,9 +41,9 @@ namespace Schism
 		Renderer::API::Init();
 		
 		SC_CORE_INFO("Schism succesfully initialized");
-		SC_CORE_INFO("Gpu - {0} {1}", glGetString(GL_VENDOR), glGetString(GL_RENDERER));
-		SC_CORE_INFO("Driver - {0}", glGetString(GL_VERSION));
-		SC_CORE_INFO("Shader Version - {0}", glGetString(GL_SHADING_LANGUAGE_VERSION));
+		//SC_CORE_INFO("Gpu - {0} {1}", glGetString(GL_VENDOR), glGetString(GL_RENDERER));
+		//SC_CORE_INFO("Driver - {0}", glGetString(GL_VERSION));
+		//SC_CORE_INFO("Shader Version - {0}", glGetString(GL_SHADING_LANGUAGE_VERSION));
 		SC_CORE_INFO("Processor count - {0}", std::thread::hardware_concurrency());
 
 		// TEMPPPPP !!!
