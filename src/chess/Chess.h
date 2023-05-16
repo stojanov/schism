@@ -4,6 +4,10 @@
 #include "BoardRenderer.h"
 #include "Engine.h"
 #include "Game.h"
+#include "GameClient.h"
+#include "schism/Game/GameEvent/CallbackBus.h"
+#include "schism/Game/GameEvent/SyncBus.h"
+#include "schism/Game/GameEvent/SyncListener.h"
 
 using namespace Schism;
 
@@ -23,9 +27,12 @@ namespace Chess
 		void OnDraw() override;
 		void OnSystemEvent(Event& e) override;
 	private:
+        Schism::GameEvent::SyncBus m_NetworkSendBus;
+        Schism::GameEvent::CallbackBus m_NetworkReceiveBus;
 		Core::Assets m_Assets;
 		BoardRenderer m_BoardRenderer;
-		Game m_Game;
+		std::shared_ptr<Game> m_Game;
+        std::shared_ptr<GameClient> m_GameClient;
 		Renderer::OrthographicCamera m_Camera;
 	};
 }

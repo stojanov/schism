@@ -6,7 +6,7 @@
 #include "msgpack/msgpack.hpp"
 #include "chess/Common.h"
 #include "chess/ChessEvents.h"
-#include "chess/Networking/NetServer.h"
+#include "chess/Server/NetServer.h"
 #include "asio.hpp"
 #include <thread>
 

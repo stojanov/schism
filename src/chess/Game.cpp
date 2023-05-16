@@ -5,9 +5,10 @@
 
 namespace Chess
 {
-	Game::Game(BoardRenderer& renderer) // Interface for the boardrenderer would be better
+	Game::Game(BoardRenderer& renderer, Schism::GameEvent::SyncBus& networkSendBus) // Interface for the boardrenderer would be better
 		:
-		m_BoardRenderer{ renderer }
+		m_BoardRenderer{ renderer },
+        m_NetworkSendBus{ networkSendBus }
 	{
         RegisterGameEvent<Move>();
         RegisterGameEvent<ResetGame>();
@@ -15,7 +16,7 @@ namespace Chess
 
         ListenGameEvent<Move>([this](Move&& m)
           {
-            m_Engine.MakeMove(m);
+                m_Engine.MakeMove(m);
           });
 
         ListenGameEvent<ResetGame>([this](ResetGame&& e)
@@ -52,7 +53,7 @@ namespace Chess
 				boardPosition = FlipBoardPosition(boardPosition);
 			}
 
-			auto selectPiece = [&](const auto& position)
+			auto selectPiece = [this](const auto& position)
 			{
 				if (position == m_State.selectedPosition)
 				{

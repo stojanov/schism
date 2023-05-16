@@ -7,22 +7,29 @@
 
 namespace Chess
 {
+    class NetGame;
+
     class NetClient
     {
+        using ReadCallback = std::function<void(std::vector<uint8_t>&, std::size_t lenght)>;
     public:
-        NetClient(asio::ip::tcp::socket soc);
+        explicit NetClient(asio::ip::tcp::socket soc);
         ~NetClient();
 
         void Stop();
+
+
+        void AttachReadCallback(ReadCallback&& readCallback);
+
         void Write(const std::vector<char>& message);
         void Write(std::vector<char>&& message);
     private:
+        static constexpr size_t MAX_BUFFER_LENGTH = 1024;
         void HandleRead(size_t length);
         void ReadWork();
-        void HandleWrite();
 
         asio::ip::tcp::socket m_Soc;
         std::vector<uint8_t> m_ReadBuffer;
-        bool m_IsStopped;
+        ReadCallback m_ReadCallback;
     };
 }

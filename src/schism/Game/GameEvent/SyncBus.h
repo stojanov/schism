@@ -14,12 +14,17 @@ namespace Schism::GameEvent
 		{
 			for (auto& listener : m_Listeners)
 			{
-				if (!listener->GameEventRegistered<T>())
+                auto listenerShared = listener.lock();
+                if (!listenerShared)
+                {
+                    continue;
+                }
+				if (!listenerShared->GameEventRegistered<T>())
 				{
 					continue;	
 				}
 
-				listener->ProduceGameEvent(std::forward<T>(e));
+                listenerShared->ProduceGameEvent(std::forward<T>(e));
 			}
 		}
 
@@ -28,12 +33,17 @@ namespace Schism::GameEvent
 		{
 			for (auto& listener : m_Listeners)
 			{
-				if (!listener->GameEventRegistered<T>())
+                auto listenerShared = listener.lock();
+                if (!listenerShared)
+                {
+                    continue;
+                }
+				if (!listenerShared->GameEventRegistered<T>())
 				{
 					continue;
 				}
 
-				listener->ProduceGameEvent(e);
+                listenerShared->ProduceGameEvent(e);
 			}
 		}
 
@@ -50,6 +60,6 @@ namespace Schism::GameEvent
             m_Listeners.emplace_back(listener);
         }
 	private:
-		std::vector<std::shared_ptr<SyncListener>> m_Listeners;
+		std::vector<std::weak_ptr<SyncListener>> m_Listeners; // weak ptr in case we want to pass a bus to a listener
 	};
 }
