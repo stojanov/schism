@@ -5,7 +5,7 @@
 #include <asio/buffer.hpp>
 #include <schism/Game/GameEvent/CallbackListener.h>
 
-namespace Chess
+namespace Chess::Net
 {
     class NetGame;
 

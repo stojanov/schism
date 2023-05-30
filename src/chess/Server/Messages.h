@@ -6,9 +6,9 @@
 
 #include <cstdint>
 
-namespace Chess
+namespace Chess::Net
 {
-    enum NetMessageType: std::uint8_t
+    enum MessageType: std::uint8_t
     {
         LOGIN = 0,
         LOGOUT,

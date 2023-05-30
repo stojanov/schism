@@ -7,11 +7,11 @@
 #include <thread>
 #include <vector>
 #include <memory>
-#include "NetClient.h"
+#include "Client.h"
 #include "NetGame.h"
-#include "NetMessageType.h"
+#include "NetMessages.h"
 
-namespace Chess
+namespace Chess::Net
 {
     class NetServer
     {
@@ -25,7 +25,7 @@ namespace Chess
         void Accept();
 
         void HandleClientDisconnect();
-        void HandleClientRead(std::weak_ptr<NetClient> client, std::vector<uint8_t>& readBuffer, std::size_t length);
+        void HandleClientRead(std::weak_ptr<Client> client, std::vector<uint8_t>& readBuffer, std::size_t length);
 
         std::uint32_t m_ClientIds; // good enough for now, use a database in the future or guid
         std::uint32_t m_GameIds;

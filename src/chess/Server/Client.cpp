@@ -4,7 +4,8 @@
 #include <msgpack/msgpack.hpp>
 #include <utility>
 #include "chess/Common.h"
-namespace Chess
+
+namespace Chess::Net
 {
     NetClient::NetClient(asio::ip::tcp::socket soc):
         m_Soc(std::move(soc))

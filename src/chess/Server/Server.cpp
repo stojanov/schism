@@ -1,7 +1,7 @@
 #include "NetServer.h"
 
 
-namespace Chess
+namespace Chess::Net
 {
     NetServer::NetServer(short port) :
         soc(m_Context),
@@ -21,9 +21,9 @@ namespace Chess
         {
             if (!ec)
             {
-                auto client = std::make_shared<NetClient>(std::move(soc));
+                auto client = std::make_shared<Client>(std::move(soc));
                 m_Clients[m_ClientIds++] = client; // client id very naive
-                std::weak_ptr<NetClient> clientWeakPtr = client;
+                std::weak_ptr<Client> clientWeakPtr = client;
                 client->AttachReadCallback([this, client = std::move(clientWeakPtr)](std::vector<uint8_t>& buffer, std::size_t length)
                                            {
                                                 HandleClientRead(client, buffer, length);
@@ -34,7 +34,7 @@ namespace Chess
         });
     }
 
-    void NetServer::HandleClientRead(std::weak_ptr<NetClient> client, std::vector<uint8_t>& readBuffer, std::size_t length)
+    void NetServer::HandleClientRead(std::weak_ptr<Client> client, std::vector<uint8_t>& readBuffer, std::size_t length)
     {
         if (readBuffer.empty())
         {
@@ -43,7 +43,7 @@ namespace Chess
 
         switch (readBuffer[0])
         {
-            case NetMessageType::MOVE:
+            case MessageType::MOVE:
             {
                 auto move = msgpack::unpack<Move>(&readBuffer[1], length - 1);
 
