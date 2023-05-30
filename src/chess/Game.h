@@ -12,7 +12,7 @@ namespace Chess
     class Game: public Schism::GameEvent::CallbackListener
 	{
 	public:
-		explicit Game(BoardRenderer& renderer, Schism::GameEvent::SyncBus& networkSendBus);
+		explicit Game(BoardRenderer& renderer, Schism::GameEvent::CallbackBus& networkSendBus);
 
 		void ProcessInput(Schism::Event& e);
         void Update();
@@ -39,9 +39,9 @@ namespace Chess
 		State m_State;
 		Engine m_Engine;
 		BoardRenderer& m_BoardRenderer;
-        Schism::GameEvent::SyncBus& m_NetworkSendBus;
+        Schism::GameEvent::CallbackBus& m_NetworkSendBus;
 		std::vector<Position> m_ValidMoves;
-		float m_Offset;
-		float m_PieceSize;
+		float m_Offset{};
+		float m_PieceSize{};
 	};
 }

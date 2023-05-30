@@ -1,11 +1,11 @@
 #pragma once
 
-#include "NetClient.h"
+#include "Client.h"
 #include "chess/Engine.h"
 
-namespace Chess
+namespace Chess::Net
 {
-    class NetGame
+    class Game
     {
     public:
     private:

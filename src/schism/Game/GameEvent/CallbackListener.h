@@ -39,7 +39,7 @@ namespace Schism::GameEvent
             };
         }
 
-        void ProcessGameEvent(size_t count = 5)
+        void ProcessGameEvents(size_t count = 5)
         {
             for (auto& i : m_QueueMap)
             {

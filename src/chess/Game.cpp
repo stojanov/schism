@@ -5,7 +5,7 @@
 
 namespace Chess
 {
-	Game::Game(BoardRenderer& renderer, Schism::GameEvent::SyncBus& networkSendBus) // Interface for the boardrenderer would be better
+	Game::Game(BoardRenderer& renderer, Schism::GameEvent::CallbackBus& networkSendBus) // Interface for the boardrenderer would be better
 		:
 		m_BoardRenderer{ renderer },
         m_NetworkSendBus{ networkSendBus }

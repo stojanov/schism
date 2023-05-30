@@ -9,15 +9,15 @@
 #include <memory>
 #include "Client.h"
 #include "NetGame.h"
-#include "NetMessages.h"
+#include "Messages.h"
 
 namespace Chess::Net
 {
-    class NetServer
+    class Server
     {
     public:
-        explicit NetServer(short port);
-        ~NetServer();
+        explicit Server(short port);
+        ~Server();
 
         void Start(); // Will spawn a new network thread
         void Stop();
@@ -27,12 +27,9 @@ namespace Chess::Net
         void HandleClientDisconnect();
         void HandleClientRead(std::weak_ptr<Client> client, std::vector<uint8_t>& readBuffer, std::size_t length);
 
-        std::uint32_t m_ClientIds; // good enough for now, use a database in the future or guid
-        std::uint32_t m_GameIds;
         asio::io_context m_Context;
-        asio::ip::tcp::socket soc;
         asio::ip::tcp::acceptor m_Acceptor;
-        phmap::parallel_flat_hash_map<std::uint32_t, std::shared_ptr<NetClient>> m_Clients;
+        phmap::parallel_flat_hash_map<std::uint32_t, std::shared_ptr<Client>> m_Clients;
         phmap::parallel_flat_hash_map<std::uint32_t, std::shared_ptr<NetGame>> m_ActiveGames;
     };
 }

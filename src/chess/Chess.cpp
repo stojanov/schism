@@ -45,7 +45,9 @@ namespace Chess
 		m_BoardRenderer.Init(std::move(sprites), width, height, pieceSize, 0.16f);
 
         m_Game = std::make_shared<Game>(m_BoardRenderer, m_NetworkSendBus);
-        m_GameClient = std::make_shared<GameClient>(m_NetworkReceiveBus);
+        std::string host = ""; // Temporary
+        std::string port = "";
+        m_GameClient = std::make_shared<GameClient>(host, port, m_NetworkReceiveBus);
 
         m_NetworkSendBus.AttachListener(m_GameClient);
         m_NetworkReceiveBus.AttachListener(m_Game);
@@ -55,11 +57,15 @@ namespace Chess
 
 	void Chess::OnAttach()
 	{
+        m_GameClientThread = std::jthread([this]()
+                                          {
+                                                m_GameClient->Start();
+                                          });
 	}
 
 	void Chess::OnDetach()
 	{
-
+        m_GameClient->Stop();
 	}
 
 	void Chess::OnPause()
@@ -80,6 +86,7 @@ namespace Chess
 	void Chess::OnUpdate(Timestep ts)
 	{
         m_Game->Update();
+        m_GameClient->PollEvents();
 	}
 
 	void Chess::OnDraw()

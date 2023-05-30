@@ -27,8 +27,9 @@ namespace Chess
 		void OnDraw() override;
 		void OnSystemEvent(Event& e) override;
 	private:
-        Schism::GameEvent::SyncBus m_NetworkSendBus;
+        Schism::GameEvent::CallbackBus m_NetworkSendBus;
         Schism::GameEvent::CallbackBus m_NetworkReceiveBus;
+        std::jthread m_GameClientThread;
 		Core::Assets m_Assets;
 		BoardRenderer m_BoardRenderer;
 		std::shared_ptr<Game> m_Game;

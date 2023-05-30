@@ -3,8 +3,14 @@
 #include <array>
 #include <cstdint>
 #include "msgpack/msgpack.hpp"
+
 namespace Chess
 {
+    namespace Net
+    {
+        static constexpr size_t MAX_MESSAGE_BUFFER_LENGTH = 1024;
+    }
+
 	enum PieceType
 	{
 		PieceType_Pawn = 0,
@@ -55,8 +61,8 @@ namespace Chess
 	struct Move
 	{
         Piece piece{PieceType_Blank }; // Might be useless
-		Position currentPosition;
-		Position prevPosition;
+		Position currentPosition{ 0, 0 };
+		Position prevPosition{ 0, 0 };
 
         template<typename T>
         void pack(T& p)
@@ -64,6 +70,11 @@ namespace Chess
             p(piece, currentPosition, prevPosition);
         }
 	};
+
+    namespace Net
+    {
+
+    }
 
 	using Board = std::array<std::array<Piece, 8>, 8>;
 

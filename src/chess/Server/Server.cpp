@@ -1,28 +1,35 @@
-#include "NetServer.h"
+#include "Server.h"
 
 
 namespace Chess::Net
 {
-    NetServer::NetServer(short port) :
-        soc(m_Context),
+    Server::Server(short port) :
         m_Acceptor(m_Context,asio::ip::tcp::endpoint(asio::ip::tcp::v4(), port))
     {
         Accept();
     }
 
-    NetServer::~NetServer()
+    Server::~Server()
     {
         Stop();
     }
 
-    void NetServer::Accept()
+    void Server::Accept()
     {
-        m_Acceptor.async_accept(soc, [this](std::error_code ec)
+        asio::ip::tcp::socket soc(m_Context);
+
+        m_Acceptor.async_accept(soc, [&soc, this](std::error_code ec)
         {
             if (!ec)
             {
+                //auto client = std::make_shared<Client>(std::move(s));
                 auto client = std::make_shared<Client>(std::move(soc));
-                m_Clients[m_ClientIds++] = client; // client id very naive
+
+                auto id = reinterpret_cast<uint64_t>(client.get()); // hacky way to get a unique id
+
+                client->AssignId(id);
+
+                m_Clients[id] = client;
                 std::weak_ptr<Client> clientWeakPtr = client;
                 client->AttachReadCallback([this, client = std::move(clientWeakPtr)](std::vector<uint8_t>& buffer, std::size_t length)
                                            {
@@ -34,7 +41,7 @@ namespace Chess::Net
         });
     }
 
-    void NetServer::HandleClientRead(std::weak_ptr<Client> client, std::vector<uint8_t>& readBuffer, std::size_t length)
+    void Server::HandleClientRead(std::weak_ptr<Client> client, std::vector<uint8_t>& readBuffer, std::size_t length)
     {
         if (readBuffer.empty())
         {
@@ -49,6 +56,21 @@ namespace Chess::Net
 
                 SC_CORE_INFO("Move: currentPosition x:{} y:{}, pieceType: {}, pieceColor: {}",
                              move.currentPosition.x, move.currentPosition.y, move.piece.type, move.piece.color);
+
+                for (auto& i : m_Clients)
+                {
+                    auto c = client.lock();
+                    if (!c)
+                    {
+                        return;
+                    }
+                    if (i.second->Id() == c->Id())
+                    {
+                        continue;
+                    }
+
+
+                }
                 break;
             }
             default:
@@ -56,7 +78,7 @@ namespace Chess::Net
         }
     }
 
-    void NetServer::Stop()
+    void Server::Stop()
     {
         if (!m_Context.stopped())
         {
@@ -64,7 +86,7 @@ namespace Chess::Net
         }
     }
 
-    void NetServer::Start()
+    void Server::Start()
     {
         m_Context.run();
     }

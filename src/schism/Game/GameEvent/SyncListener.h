@@ -39,6 +39,12 @@ namespace Schism::GameEvent
 			return std::any_cast<T>(m_QueueMap[typeid(T)]->PeekPop());
 		}
 
+        template<typename T>
+        void ListenAllEvents()
+        {
+
+        }
+
 		template<typename T>
 		[[nodiscard]] std::optional<T> ListenGameEventFor(std::chrono::milliseconds timeout)
 		{
@@ -69,6 +75,7 @@ namespace Schism::GameEvent
                 i->second->Push(o);
             }
 		}
+
 
         phmap::parallel_flat_hash_map<std::type_index, std::unique_ptr<Queue>> m_QueueMap;
 		//std::unordered_map<std::type_index, Queue> m_QueueMap;
