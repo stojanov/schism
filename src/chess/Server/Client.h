@@ -21,12 +21,12 @@ namespace Chess::Net
 
         void AttachReadCallback(ReadCallback&& readCallback);
 
-        uint64_t Id()
+        [[nodiscard]] uint64_t Id() const
         {
             return m_Id;
         }
         void Write(const std::vector<char>& message);
-        void Write(std::vector<char>&& message);
+        void Write(std::vector<unsigned char>&& message);
     private:
         void HandleRead(size_t length);
         void ReadWork();

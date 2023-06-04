@@ -34,6 +34,14 @@ namespace Chess::Net
         m_ReadCallback = std::move(readCallback);
     }
 
+    void Client::Write(std::vector<unsigned char>&& message)
+    {
+        m_Soc.async_write_some(asio::buffer(std::move(message)), [this](std::error_code, size_t length)
+        {
+            SC_CORE_INFO("Client {} Write", m_Id);
+        });
+    }
+
     void Client::ReadWork()
     {
         m_Soc.async_read_some(asio::buffer(m_ReadBuffer, MAX_MESSAGE_BUFFER_LENGTH),

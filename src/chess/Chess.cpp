@@ -45,8 +45,8 @@ namespace Chess
 		m_BoardRenderer.Init(std::move(sprites), width, height, pieceSize, 0.16f);
 
         m_Game = std::make_shared<Game>(m_BoardRenderer, m_NetworkSendBus);
-        std::string host = ""; // Temporary
-        std::string port = "";
+        std::string host = "localhost"; // Temporary
+        std::string port = "6666";
         m_GameClient = std::make_shared<GameClient>(host, port, m_NetworkReceiveBus);
 
         m_NetworkSendBus.AttachListener(m_GameClient);

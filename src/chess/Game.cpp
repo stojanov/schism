@@ -16,6 +16,7 @@ namespace Chess
 
         ListenGameEvent<Move>([this](Move&& m)
           {
+                SC_CORE_INFO("(Chess/Game) Got move event");
                 m_Engine.MakeMove(m);
           });
 
@@ -75,6 +76,7 @@ namespace Chess
 				{
 					SC_CORE_INFO("Valid move count {0}", m_ValidMoves.size());
 				}
+                SC_CORE_WARN("SELECTED PIECE");
 			};
 
 			if (m_State.pieceSelected)
@@ -97,6 +99,9 @@ namespace Chess
 
 				m_Engine.MakeMove(m); // Temporary
 
+                SC_CORE_INFO("Sending move to networkSendBus");
+                m_NetworkSendBus.PostEvent<Move>(m);
+
 				return;
 			}
 
@@ -116,7 +121,7 @@ namespace Chess
 
     void Game::Update()
     {
-        ProcessGameEvent();
+        ProcessGameEvents();
     }
 
 	void Game::DrawBoard()

@@ -16,9 +16,7 @@ namespace Chess::Net
 
     void Server::Accept()
     {
-        asio::ip::tcp::socket soc(m_Context);
-
-        m_Acceptor.async_accept(soc, [&soc, this](std::error_code ec)
+        m_Acceptor.async_accept([this](std::error_code ec, asio::ip::tcp::socket soc)
         {
             if (!ec)
             {
@@ -26,7 +24,7 @@ namespace Chess::Net
                 auto client = std::make_shared<Client>(std::move(soc));
 
                 auto id = reinterpret_cast<uint64_t>(client.get()); // hacky way to get a unique id
-
+                SC_CORE_INFO("Connected client {}", id);
                 client->AssignId(id);
 
                 m_Clients[id] = client;
@@ -37,6 +35,10 @@ namespace Chess::Net
                                            });
 
                 Accept();
+            }
+            else
+            {
+                SC_CORE_ERROR("Error accepting client: {}", ec.message());
             }
         });
     }
@@ -59,17 +61,21 @@ namespace Chess::Net
 
                 for (auto& i : m_Clients)
                 {
-                    auto c = client.lock();
-                    if (!c)
+                    auto c = i.second;
+                    auto myClient = client.lock();
+                    if (!myClient)
                     {
                         return;
                     }
-                    if (i.second->Id() == c->Id())
+                    if (i.second->Id() == myClient->Id())
                     {
                         continue;
                     }
 
+                    auto movePacked = msgpack::pack(move);
+                    movePacked.insert(movePacked.begin(), MessageType::MOVE);
 
+                    c->Write(std::move(movePacked));
                 }
                 break;
             }
@@ -88,6 +94,15 @@ namespace Chess::Net
 
     void Server::Start()
     {
-        m_Context.run();
+        try
+        {
+            m_Context.run();
+        }
+        catch (std::exception& e)
+        {
+            SC_CORE_ERROR("Error running server: {}", e.what());
+        }
+
+
     }
 }

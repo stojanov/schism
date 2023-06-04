@@ -76,13 +76,12 @@ namespace Chess
 				// Implement takes piece
 				m_Board[move.prevPosition.x][move.prevPosition.y] = { PieceType_Blank };
 				m_Board[move.currentPosition.x][move.currentPosition.y] = piece;
+                m_TurnWhite = !m_TurnWhite;
 				return true;
 			}
 		}
 
-        m_TurnWhite = !m_TurnWhite;
-
-		return true;
+		return false;
 	}
 
 	const std::vector<Position>& Engine::GetValidMoves(const Position& position)

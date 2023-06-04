@@ -14,6 +14,7 @@ namespace Schism::GameEvent
         {
             for (auto& listener : m_Listeners)
             {
+                SC_CORE_INFO("(CallbackBus) Trying to find listener for event");
                 auto listenerShared = listener.lock();
                 if (!listenerShared)
                 {
@@ -23,7 +24,7 @@ namespace Schism::GameEvent
                 {
                     continue;
                 }
-
+                SC_CORE_INFO("(CallbackBus) POSTING EVENT!!");
                 listenerShared->ProduceGameEvent(std::forward<T>(e));
             }
         }
@@ -33,6 +34,7 @@ namespace Schism::GameEvent
         {
             for (auto& listener : m_Listeners)
             {
+                SC_CORE_INFO("(CallbackBus) Trying to find listener for event");
                 auto listenerShared = listener.lock();
                 if (!listenerShared)
                 {
@@ -43,6 +45,7 @@ namespace Schism::GameEvent
                     continue;
                 }
 
+                SC_CORE_INFO("(CallbackBus) POSTING EVENT!!");
                 listenerShared->ProduceGameEvent(e);
             }
         }

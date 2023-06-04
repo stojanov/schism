@@ -10,7 +10,7 @@ namespace Chess
         m_GameEventBus{ gameEventBus },
         m_Socket(m_IoContext)
     {
-        m_ReadBuffer.reserve(Net::MAX_MESSAGE_BUFFER_LENGTH);
+        m_ReadBuffer.resize(Net::MAX_MESSAGE_BUFFER_LENGTH);
 
         asio::ip::tcp::resolver resolver(m_IoContext);
 
@@ -23,11 +23,14 @@ namespace Chess
                                 {
                                     // log out error
                                 }
+                                SC_CORE_INFO("Connected to server");
                                 ReadWork();
                             });
 
+        RegisterGameEvent<Move>();
         ListenGameEvent<Move>([this](Move&& m)
                               {
+                                    SC_CORE_INFO("(GameClient) Got move Event, Writing move to network!");
                                     auto packed = msgpack::pack(m);
                                     packed.insert(packed.begin(), Net::MessageType::MOVE);
                                     m_Socket.write_some(asio::buffer(packed));
@@ -46,6 +49,7 @@ namespace Chess
 
     void GameClient::Start()
     {
+        SC_CORE_INFO("Started network game client thread");
         m_IoContext.run();
     }
 
@@ -69,7 +73,7 @@ namespace Chess
                         case Net::MessageType::MOVE:
                         {
                             Move m = msgpack::unpack<Move>(&m_ReadBuffer[1], length - 1);
-                            m_GameEventBus.PostEvent(m);
+                            m_GameEventBus.PostEvent<Move>(m);
                             break;
                         }
                         default:

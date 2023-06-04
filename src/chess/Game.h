@@ -4,7 +4,7 @@
 #include "BoardRenderer.h"
 #include "Engine.h"
 #include "schism/Game/GameEvent/CallbackListener.h"
-#include "schism/Game/GameEvent/SyncBus.h"
+#include "schism/Game/GameEvent/CallbackBus.h"
 
 namespace Chess
 {
