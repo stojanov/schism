@@ -1,5 +1,5 @@
 #include "Server.h"
-
+#include <random>
 
 namespace Chess::Net
 {
@@ -20,7 +20,6 @@ namespace Chess::Net
         {
             if (!ec)
             {
-                //auto client = std::make_shared<Client>(std::move(s));
                 auto client = std::make_shared<Client>(std::move(soc));
 
                 auto id = reinterpret_cast<uint64_t>(client.get()); // hacky way to get a unique id
@@ -42,48 +41,6 @@ namespace Chess::Net
             }
         });
     }
-
-    void Server::HandleClientRead(std::weak_ptr<Client> client, std::vector<uint8_t>& readBuffer, std::size_t length)
-    {
-        if (readBuffer.empty())
-        {
-            return; // log out error
-        }
-
-        switch (readBuffer[0])
-        {
-            case MessageType::MOVE:
-            {
-                auto move = msgpack::unpack<Move>(&readBuffer[1], length - 1);
-
-                SC_CORE_INFO("Move: currentPosition x:{} y:{}, pieceType: {}, pieceColor: {}",
-                             move.currentPosition.x, move.currentPosition.y, move.piece.type, move.piece.color);
-
-                for (auto& i : m_Clients)
-                {
-                    auto c = i.second;
-                    auto myClient = client.lock();
-                    if (!myClient)
-                    {
-                        return;
-                    }
-                    if (i.second->Id() == myClient->Id())
-                    {
-                        continue;
-                    }
-
-                    auto movePacked = msgpack::pack(move);
-                    movePacked.insert(movePacked.begin(), MessageType::MOVE);
-
-                    c->Write(std::move(movePacked));
-                }
-                break;
-            }
-            default:
-                break; // log out error
-        }
-    }
-
     void Server::Stop()
     {
         if (!m_Context.stopped())
@@ -102,7 +59,98 @@ namespace Chess::Net
         {
             SC_CORE_ERROR("Error running server: {}", e.what());
         }
+    }
 
+    void Server::HandleClientRead(std::weak_ptr<Client> client, std::vector<uint8_t>& readBuffer, std::size_t length)
+    {
+        if (readBuffer.empty())
+        {
+            return; // log out error
+        }
+
+        switch (readBuffer[0])
+        {
+        case MessageType::REQUEST_GAME:
+        {
+            auto c = client.lock();
+
+            if (!c)
+            {
+                // figure out what should happen if pointer invalid
+                return;
+            }
+
+            CreateGame(c);
+            break;
+        }
+        case MessageType::GAME_MOVE:
+        {
+            auto gameMove = msgpack::unpack<GameMove>(&readBuffer[1], length - 1);
+
+            if (auto gamePair = m_ActiveGames.find(gameMove.gameId); gamePair != m_ActiveGames.end())
+            {
+                gamePair->second->MakeMove(gameMove.move);
+            }
+            else
+            {
+                SC_CORE_ERROR("Client, requested game with an invalid game id");
+            }
+
+            break;
+        }
+        default:
+            break; // log out error
+        }
+    }
+
+    void Server::CreateGame(const std::shared_ptr<Client>& clientThatStarted)
+    {
+        static std::random_device rd;
+        static std::mt19937 gen(rd());
+        static std::uniform_int_distribution dist(0, 100);
+
+        std::shared_ptr<Client> otherPlayer = nullptr;
+
+        auto it = m_Clients.begin();
+        do // filter only players that are waiting to join a game
+        {
+            otherPlayer = it->second;
+            it = std::next(it);
+        } while (otherPlayer == clientThatStarted);
+
+        
+        bool player1IsWhite = dist(gen) > 50;
+        
+        auto game = std::make_shared<Game>(clientThatStarted, otherPlayer, player1IsWhite);
+        auto id = reinterpret_cast<uint64_t>(game.get());
+
+        game->AssignId(id);
+
+        m_ActiveGames[id] = game;
+
+        EnterGame enterGame;
+        enterGame.gameId = id;
+        enterGame.otherPlayerId = otherPlayer->Id();
+        enterGame.isWhite = player1IsWhite;
+
+        {
+            auto enterGamePacked = msgpack::pack(enterGame);
+            PrependMessageType(enterGamePacked, MessageType::ENTER_GAME);
+
+            clientThatStarted->Write(std::move(enterGamePacked));
+        }
+
+        enterGame.otherPlayerId = clientThatStarted->Id();
+        enterGame.isWhite = !player1IsWhite;
+
+        {
+            auto enterGamePacked = msgpack::pack(enterGame);
+            PrependMessageType(enterGamePacked, MessageType::ENTER_GAME);
+
+            clientThatStarted->Write(std::move(enterGamePacked));
+        }
+
+        // send player messages
 
     }
 }

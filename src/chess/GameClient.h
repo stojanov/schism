@@ -18,6 +18,7 @@ class GameClient: public Schism::GameEvent::CallbackListener
         void PollEvents();
     private:
         void ReadWork();
+        void HandleRead(size_t length);
         std::vector<uint8_t> m_ReadBuffer;
         Schism::GameEvent::CallbackBus& m_GameEventBus;
         asio::io_context m_IoContext;

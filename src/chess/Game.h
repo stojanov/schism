@@ -23,6 +23,7 @@ namespace Chess
 			bool pieceSelected{ false };
 			Position selectedPosition{ 0, 0 };
 			bool isWhite{ true };
+			uint64_t gameId{ 0 };
 		};
 
 		[[nodiscard]] Position FindBoardPositionFromCoord(float x, float y) const
@@ -39,7 +40,7 @@ namespace Chess
 		State m_State;
 		Engine m_Engine;
 		BoardRenderer& m_BoardRenderer;
-        Schism::GameEvent::CallbackBus& m_NetworkSendBus;
+		Schism::GameEvent::CallbackBus& m_NetworkSendBus;
 		std::vector<Position> m_ValidMoves;
 		float m_Offset{};
 		float m_PieceSize{};

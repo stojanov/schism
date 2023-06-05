@@ -60,7 +60,7 @@ namespace Chess
 
 	struct Move
 	{
-        Piece piece{PieceType_Blank }; // Might be useless
+        Piece piece{ PieceType_Blank }; // Might be useless
 		Position currentPosition{ 0, 0 };
 		Position prevPosition{ 0, 0 };
 
@@ -70,11 +70,6 @@ namespace Chess
             p(piece, currentPosition, prevPosition);
         }
 	};
-
-    namespace Net
-    {
-
-    }
 
 	using Board = std::array<std::array<Piece, 8>, 8>;
 

@@ -33,6 +33,10 @@ namespace Schism::GameEvent
         template<typename T>
         void ListenGameEvent(EventCallback<T>&& eventFunction)
         {
+            if (!GameEventRegistered<T>())
+            {
+                m_QueueMap[typeid(T)] = std::make_unique<Queue>();
+            }
             m_CallbackMap[typeid(T)] = [functor = std::move(eventFunction)](std::any ev)
             {
                 functor(std::any_cast<T>(ev));

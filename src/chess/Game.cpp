@@ -1,7 +1,7 @@
 #include "Game.h"
 
 #include "schism/Core/Events/MouseEvents.h"
-#include "ChessEvents.h"
+#include "Server/Messages.h"
 
 namespace Chess
 {
@@ -10,24 +10,17 @@ namespace Chess
 		m_BoardRenderer{ renderer },
         m_NetworkSendBus{ networkSendBus }
 	{
-        RegisterGameEvent<Move>();
-        RegisterGameEvent<ResetGame>();
-        RegisterGameEvent<StartGame>();
-
-        ListenGameEvent<Move>([this](Move&& m)
+        ListenGameEvent<Net::GameMove>([this](Net::GameMove&& gameMove)
           {
                 SC_CORE_INFO("(Chess/Game) Got move event");
-                m_Engine.MakeMove(m);
+				// check the game id
+                m_Engine.MakeMove(gameMove.move);
           });
 
-        ListenGameEvent<ResetGame>([this](ResetGame&& e)
+        ListenGameEvent<Net::EnterGame>([this](Net::EnterGame&& e)
            {
-                m_Engine.Reset();
-           });
-
-        ListenGameEvent<StartGame>([this](StartGame&& e)
-           {
-                m_State.isWhite = e.IsWhite;
+                m_State.isWhite = e.isWhite;
+				m_State.gameId = e.gameId;
                 m_Engine.Reset();
            });
 	}
@@ -43,8 +36,7 @@ namespace Chess
 			auto& pos = evt.GetPosition();
 			auto&& boardPosition = FindBoardPositionFromCoord(pos.x, pos.y);
 
-			if (boardPosition.x > board.size() || boardPosition.y > board.size() ||
-				boardPosition.x < 0 || boardPosition.y < 0)
+			if (boardPosition.x > board.size() || boardPosition.y > board.size())
 			{
 				return;
 			}
@@ -100,7 +92,8 @@ namespace Chess
 				m_Engine.MakeMove(m); // Temporary
 
                 SC_CORE_INFO("Sending move to networkSendBus");
-                m_NetworkSendBus.PostEvent<Move>(m);
+				Net::GameMove gameMove{ m_State.gameId, m };
+                m_NetworkSendBus.PostEvent<Net::GameMove>(gameMove);
 
 				return;
 			}

@@ -2,6 +2,7 @@
 
 #include "Common.h"
 #include "Server/Messages.h"
+#include "ChessEvents.h"
 
 namespace Chess
 {
@@ -21,20 +22,36 @@ namespace Chess
                             {
                                 if (error)
                                 {
-                                    // log out error
+                                    SC_CORE_ERROR("Error connecting to server!");
                                 }
                                 SC_CORE_INFO("Connected to server");
                                 ReadWork();
                             });
 
-        RegisterGameEvent<Move>();
-        ListenGameEvent<Move>([this](Move&& m)
+        static_assert(Net::GameMoveConcept<Net::EnterGame>, "asd");
+
+        ListenGameEvent<Net::GameMove>([this](Net::GameMove&& m)
                               {
-                                    SC_CORE_INFO("(GameClient) Got move Event, Writing move to network!");
-                                    auto packed = msgpack::pack(m);
-                                    packed.insert(packed.begin(), Net::MessageType::MOVE);
-                                    m_Socket.write_some(asio::buffer(packed));
+                                    auto message = Net::PackMessage(m, Net::MessageType::GAME_MOVE);
+                                    auto lengthSent = m_Socket.write_some(asio::buffer(std::move(message)));
+                                    if (lengthSent != message.size())
+                                    {
+                                        SC_CORE_ERROR("(GameClient) Error sending data");
+                                    }
                               });
+
+        ListenGameEvent<Net::RequestGame>([this](Net::RequestGame&& requestGame)
+            {
+                std::vector<uint8_t> vec;
+                Net::PrependMessageType(vec, Net::MessageType::REQUEST_GAME);
+
+                auto lengthSent = m_Socket.write_some(asio::buffer(vec));
+
+                if (lengthSent != vec.size())
+                {
+                    SC_CORE_ERROR("(GameClient) Error sending data");
+                }
+            });
     }
 
     void GameClient::PollEvents()
@@ -49,7 +66,6 @@ namespace Chess
 
     void GameClient::Start()
     {
-        SC_CORE_INFO("Started network game client thread");
         m_IoContext.run();
     }
 
@@ -61,26 +77,34 @@ namespace Chess
                 {
                     if (ec)
                     {
-                        // log out error
+                        SC_CORE_ERROR("Error reading from socket!");
                     }
-                    if (length < 2)
+                    if (length < 1)
                     {
                         SC_CORE_ERROR("Message not big enough");
                     }
 
-                    switch (m_ReadBuffer[0])
-                    {
-                        case Net::MessageType::MOVE:
-                        {
-                            Move m = msgpack::unpack<Move>(&m_ReadBuffer[1], length - 1);
-                            m_GameEventBus.PostEvent<Move>(m);
-                            break;
-                        }
-                        default:
-                            SC_CORE_ERROR("Unknown message Type");
-                    }
-
+                    HandleRead(length);
                     ReadWork();
                 });
+    }
+
+    void GameClient::HandleRead(size_t length)
+    {
+        switch (m_ReadBuffer[0])
+        {
+        case Net::MessageType::ENTER_GAME:
+        {
+            Net::EnterGame enterGame = Net::UnpackMessage<Net::EnterGame>(m_ReadBuffer, length);
+            m_GameEventBus.PostEvent(enterGame); // in the future we need to pass the gameid as well
+            break;
+        }
+        case Net::MessageType::GAME_MOVE:
+        {
+            Net::GameMove gameMove = Net::UnpackMessage<Net::GameMove>(m_ReadBuffer, length);
+
+            m_GameEventBus.PostEvent(gameMove); // in the future we need to pass the gameid also
+        }
+        }
     }
 }

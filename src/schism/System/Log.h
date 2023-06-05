@@ -4,7 +4,7 @@
 
 namespace Schism
 {
-	constexpr char* LOG_FILENAME = "schism.log";
+	constexpr char LOG_FILENAME[] = "schism.log";
 
 	class Log
 	{

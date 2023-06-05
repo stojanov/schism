@@ -6,8 +6,11 @@
 #include "schism/Game/GameEvent/CallbackListener.h"
 namespace Chess::Net
 {
-    class NetGame;
 
+    /*
+        Client should store a list of all the game is is active in
+    */
+    
     class Client
     {
         using ReadCallback = std::function<void(std::vector<uint8_t>&, std::size_t lenght)>;
@@ -25,7 +28,7 @@ namespace Chess::Net
         {
             return m_Id;
         }
-        void Write(const std::vector<char>& message);
+
         void Write(std::vector<unsigned char>&& message);
     private:
         void HandleRead(size_t length);

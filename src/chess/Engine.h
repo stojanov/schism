@@ -12,6 +12,7 @@ namespace Chess
 	public:
 		Engine();
 		void Reset();
+		// Todo: add undo move
 		bool MakeMove(const Move& move);
 		[[nodiscard]] const std::vector<Position>& GetValidMoves(const Position& position);
 		[[nodiscard]] const Board& GetBoardState() const
