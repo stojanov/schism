@@ -22,7 +22,7 @@ namespace Schism::Renderer
 		GLenum GetFormat() const { return m_Format; }
 		int GetWidth() const { return m_Width; }
 		int GetHeight() const { return m_Height; }
-		const glm::vec2& GetSize() const { return { m_Width, m_Height }; }
+		const glm::vec2 GetSize() const { return { m_Width, m_Height }; }
 
 		bool operator==(Texture& other) const
 		{

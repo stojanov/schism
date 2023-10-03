@@ -4,7 +4,7 @@
 
 namespace Schism
 {
-	constexpr char* LOG_FILENAME = "schism.log";
+	const std::string LOG_FILENAME = "schism.log";
 
 	class Log
 	{
