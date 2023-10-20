@@ -14,7 +14,6 @@ namespace Schism::GameEvent
         {
             for (auto& listener : m_Listeners)
             {
-                SC_CORE_INFO("(CallbackBus) Trying to find listener for event");
                 auto listenerShared = listener.lock();
                 if (!listenerShared)
                 {
@@ -24,7 +23,6 @@ namespace Schism::GameEvent
                 {
                     continue;
                 }
-                SC_CORE_INFO("(CallbackBus) POSTING EVENT!!");
                 listenerShared->ProduceGameEvent(std::forward<T>(e));
             }
         }
@@ -34,7 +32,6 @@ namespace Schism::GameEvent
         {
             for (auto& listener : m_Listeners)
             {
-                SC_CORE_INFO("(CallbackBus) Trying to find listener for event");
                 auto listenerShared = listener.lock();
                 if (!listenerShared)
                 {
@@ -45,7 +42,6 @@ namespace Schism::GameEvent
                     continue;
                 }
 
-                SC_CORE_INFO("(CallbackBus) POSTING EVENT!!");
                 listenerShared->ProduceGameEvent(e);
             }
         }
@@ -53,7 +49,7 @@ namespace Schism::GameEvent
         template<typename T>
         void AttachListener(const std::shared_ptr<T>& listener)
         {
-            static_assert(std::is_base_of_v<CallbackListener, T>, "(SyncBus, AttachListener) T is not of base SyncListener type");
+            static_assert(std::is_base_of_v<CallbackListener, T>, "(CallbackBus, AttachListener) T is not of base CallbackListener type");
 
             m_Listeners.emplace_back(std::dynamic_pointer_cast<CallbackListener>(listener));
         }

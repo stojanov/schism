@@ -14,6 +14,7 @@ namespace Chess
 	public:
 		explicit Game(BoardRenderer& renderer, Schism::GameEvent::CallbackBus& networkSendBus);
 
+        void UndoMove();
 		void ProcessInput(Schism::Event& e);
         void Update();
 		void DrawBoard();
@@ -24,6 +25,9 @@ namespace Chess
 			Position selectedPosition{ 0, 0 };
 			bool isWhite{ true };
 			uint64_t gameId{ 0 };
+            bool waitingForMove{ false };
+            bool moveValidated{ true };
+            uint16_t moveCount{ 0 };
 		};
 
 		[[nodiscard]] Position FindBoardPositionFromCoord(float x, float y) const

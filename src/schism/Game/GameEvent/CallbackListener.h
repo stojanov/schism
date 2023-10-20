@@ -18,13 +18,6 @@ namespace Schism::GameEvent
         using EventCallback = std::function<void(T&&)>;
 
         template<typename T>
-        void RegisterGameEvent()
-        {
-            m_QueueMap[typeid(T)] = std::make_unique<Queue>();
-            m_CallbackMap[typeid(T)];
-        }
-
-        template<typename T>
         [[nodiscard]] bool GameEventRegistered()
         {
             return m_QueueMap.find(typeid(T)) != m_QueueMap.end();
@@ -40,6 +33,7 @@ namespace Schism::GameEvent
             m_CallbackMap[typeid(T)] = [functor = std::move(eventFunction)](std::any ev)
             {
                 functor(std::any_cast<T>(ev));
+
             };
         }
 
@@ -76,7 +70,7 @@ namespace Schism::GameEvent
             SC_CORE_WARN("(CallbackListener) ProduceGameEvent: type not found");
         }
 
-        phmap::parallel_flat_hash_map<std::type_index, std::unique_ptr<Queue>> m_QueueMap;
-        phmap::parallel_flat_hash_map<std::type_index, std::function<void(std::any)>> m_CallbackMap;
+        phmap::parallel_node_hash_map<std::type_index, std::unique_ptr<Queue>> m_QueueMap;
+        phmap::parallel_node_hash_map<std::type_index, std::function<void(std::any)>> m_CallbackMap;
     };
 }

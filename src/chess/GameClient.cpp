@@ -18,29 +18,29 @@ namespace Chess
         auto endpoints = resolver.resolve(host, port);
 
         asio::async_connect(m_Socket, endpoints,
-                            [this](const asio::error_code& error, const asio::ip::tcp::endpoint& endpoint)
-                            {
-                                if (error)
-                                {
-                                    SC_CORE_ERROR("Error connecting to server!");
-                                }
-                                SC_CORE_INFO("Connected to server");
-                                ReadWork();
-                            });
+            [this](const asio::error_code& error, const asio::ip::tcp::endpoint& endpoint)
+            {
+                if (error)
+                {
+                    SC_CORE_ERROR("Error connecting to server!");
+                }
+                SC_CORE_INFO("Connected to server");
+                ReadWork();
+            });
 
-        static_assert(Net::GameMoveConcept<Net::EnterGame>, "asd");
+        ListenGameEvent<Net::GameMove>(
+                [this](Net::GameMove&& m)
+            {
+                auto message = Net::PackMessage(m);
+                auto lengthSent = m_Socket.write_some(asio::buffer(message));
+                if (lengthSent != message.size())
+                {
+                    SC_CORE_ERROR("(GameClient) Error sending data");
+                }
+            });
 
-        ListenGameEvent<Net::GameMove>([this](Net::GameMove&& m)
-                              {
-                                    auto message = Net::PackMessage(m, Net::MessageType::GAME_MOVE);
-                                    auto lengthSent = m_Socket.write_some(asio::buffer(std::move(message)));
-                                    if (lengthSent != message.size())
-                                    {
-                                        SC_CORE_ERROR("(GameClient) Error sending data");
-                                    }
-                              });
-
-        ListenGameEvent<Net::RequestGame>([this](Net::RequestGame&& requestGame)
+        ListenGameEvent<Net::RequestGame>(
+                [this](Net::RequestGame&& requestGame)
             {
                 std::vector<uint8_t> vec;
                 Net::PrependMessageType(vec, Net::MessageType::REQUEST_GAME);
@@ -91,20 +91,31 @@ namespace Chess
 
     void GameClient::HandleRead(size_t length)
     {
+        if (length == 0)
+        {
+            // log out error
+            return;
+        }
         switch (m_ReadBuffer[0])
         {
-        case Net::MessageType::ENTER_GAME:
-        {
-            Net::EnterGame enterGame = Net::UnpackMessage<Net::EnterGame>(m_ReadBuffer, length);
-            m_GameEventBus.PostEvent(enterGame); // in the future we need to pass the gameid as well
-            break;
-        }
-        case Net::MessageType::GAME_MOVE:
-        {
-            Net::GameMove gameMove = Net::UnpackMessage<Net::GameMove>(m_ReadBuffer, length);
-
-            m_GameEventBus.PostEvent(gameMove); // in the future we need to pass the gameid also
-        }
+            case Net::MessageType::ENTER_GAME:
+            {
+                auto enterGame = Net::UnpackMessage<Net::EnterGame>(m_ReadBuffer, length);
+                m_GameEventBus.PostEvent(enterGame);
+                break;
+            }
+            case Net::MessageType::GAME_MOVE:
+            {
+                auto gameMove = Net::UnpackMessage<Net::GameMove>(m_ReadBuffer, length);
+                m_GameEventBus.PostEvent(gameMove);
+                break;
+            }
+            case Net::MessageType::SUCCESSFUL_MOVE:
+            {
+                auto successfulMove = Net::UnpackMessage<Net::SuccessfulMove>(m_ReadBuffer, length);
+                m_GameEventBus.PostEvent(successfulMove);
+                break;
+            }
         }
     }
 }

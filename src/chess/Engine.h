@@ -13,14 +13,28 @@ namespace Chess
 		Engine();
 		void Reset();
 		// Todo: add undo move
+
+
 		bool MakeMove(const Move& move);
-		[[nodiscard]] const std::vector<Position>& GetValidMoves(const Position& position);
-		[[nodiscard]] const Board& GetBoardState() const
+        void UndoLastMove();
+
+        [[nodiscard]] uint16_t GetMoveCount()
+        {
+            return m_Moves.size();
+        }
+
+        [[nodiscard]] const std::vector<Position>& GetValidMoves(const Position& position);
+        [[nodiscard]] std::vector<Move> GetMoves();
+        [[nodiscard]] const Board& GetBoardState() const
 		{
 			return m_Board; 
 		}
-	private:
-		std::vector<Position> m_ValidMoves;
+    private:
+        struct EngineMove
+        {
+            Move move;
+            Piece takenPiece;
+        };
 
 		bool CheckObstacle(std::vector<Position>& validMoves, const Piece& myPiece, const Position& position, bool canTake) const;
 
@@ -39,7 +53,8 @@ namespace Chess
 		[[nodiscard]] const std::vector<Position>& ValidMovesKing(const Position& position);
 		[[nodiscard]] const std::vector<Position>& ValidMovesRook(const Position& position);
 
-
+        std::vector<Position> m_ValidMoves;
+        std::vector<EngineMove> m_Moves;
 		Board m_Board;
         bool m_TurnWhite;
 	};

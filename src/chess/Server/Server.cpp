@@ -61,7 +61,7 @@ namespace Chess::Net
         }
     }
 
-    void Server::HandleClientRead(std::weak_ptr<Client> client, std::vector<uint8_t>& readBuffer, std::size_t length)
+    void Server::HandleClientRead(const std::weak_ptr<Client>& client, std::vector<uint8_t>& readBuffer, std::size_t length)
     {
         if (readBuffer.empty())
         {
@@ -85,11 +85,12 @@ namespace Chess::Net
         }
         case MessageType::GAME_MOVE:
         {
-            auto gameMove = msgpack::unpack<GameMove>(&readBuffer[1], length - 1);
+            auto gameMove = UnpackMessage<GameMove>(readBuffer, length);
 
-            if (auto gamePair = m_ActiveGames.find(gameMove.gameId); gamePair != m_ActiveGames.end())
+            if (auto gamePair = m_ActiveGames.find(gameMove.gameId);
+                gamePair != m_ActiveGames.end())
             {
-                gamePair->second->MakeMove(gameMove.move);
+                gamePair->second->MakeMove(gameMove.move, client);
             }
             else
             {
@@ -111,6 +112,12 @@ namespace Chess::Net
 
         std::shared_ptr<Client> otherPlayer = nullptr;
 
+        if (m_Clients.size() < 2)
+        {
+            SC_CORE_WARN("Not enough clients to create game");
+            return;
+        }
+
         auto it = m_Clients.begin();
         do // filter only players that are waiting to join a game
         {
@@ -121,36 +128,24 @@ namespace Chess::Net
         
         bool player1IsWhite = dist(gen) > 50;
         
-        auto game = std::make_shared<Game>(clientThatStarted, otherPlayer, player1IsWhite);
-        auto id = reinterpret_cast<uint64_t>(game.get());
+        auto game = Game::Create(clientThatStarted, otherPlayer, player1IsWhite);
 
-        game->AssignId(id);
+        m_ActiveGames[game->Id()] = game;
 
-        m_ActiveGames[id] = game;
-
-        EnterGame enterGame;
-        enterGame.gameId = id;
+        EnterGame enterGame{};
+        enterGame.gameId = game->Id();
         enterGame.otherPlayerId = otherPlayer->Id();
         enterGame.isWhite = player1IsWhite;
 
-        {
-            auto enterGamePacked = msgpack::pack(enterGame);
-            PrependMessageType(enterGamePacked, MessageType::ENTER_GAME);
 
-            clientThatStarted->Write(std::move(enterGamePacked));
-        }
+        auto enterGamePacked= PackMessage(enterGame);
+
+        clientThatStarted->Write(std::move(enterGamePacked));
 
         enterGame.otherPlayerId = clientThatStarted->Id();
         enterGame.isWhite = !player1IsWhite;
 
-        {
-            auto enterGamePacked = msgpack::pack(enterGame);
-            PrependMessageType(enterGamePacked, MessageType::ENTER_GAME);
-
-            clientThatStarted->Write(std::move(enterGamePacked));
-        }
-
-        // send player messages
-
+        auto enterGamePacked2 = PackMessage(enterGame);
+        otherPlayer->Write(std::move(enterGamePacked2));
     }
 }

@@ -36,7 +36,7 @@ namespace Chess::Net
 
     void Client::Write(std::vector<unsigned char>&& message)
     {
-        m_Soc.async_write_some(asio::buffer(std::move(message)), [this](std::error_code, size_t length)
+        m_Soc.async_write_some(asio::buffer(message), [this](std::error_code, size_t length)
         {
             SC_CORE_INFO("Client {} Write", m_Id);
         });

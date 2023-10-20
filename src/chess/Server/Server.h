@@ -26,7 +26,7 @@ namespace Chess::Net
         void Accept();
 
         void HandleClientDisconnect(); // todo
-        void HandleClientRead(std::weak_ptr<Client> client, std::vector<uint8_t>& readBuffer, std::size_t length);
+        void HandleClientRead(const std::weak_ptr<Client>& client, std::vector<uint8_t>& readBuffer, std::size_t length);
         void CreateGame(const std::shared_ptr<Client>& clientThatStarted);
 
         asio::io_context m_Context;

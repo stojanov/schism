@@ -8,7 +8,7 @@
 #include "backends/imgui_impl_opengl3.h"
 #include "schism/Components/Sprite.h"
 #include "schism/Renderer/SpriteRenderer.h"
-
+#include "Server/Messages.h"
 #include "Common.h"
 
 using namespace Schism;
@@ -98,10 +98,16 @@ namespace Chess
 		SpriteRenderer::BeginScene(m_Camera.GetProjectionMatrix());
 		m_Game->DrawBoard();
 
-		static float size = 50;
-
-		ImGui::Begin("Debug");
-		ImGui::SliderFloat("Piece Size", &size, 0, 800);
+		ImGui::Begin("Options");
+        if (ImGui::Button("Start game"))
+        {
+            Net::RequestGame game{};
+            m_NetworkSendBus.PostEvent<Net::RequestGame>(game);
+        }
+        if (ImGui::Button("Undo Move"))
+        {
+            m_Game->UndoMove();
+        }
 		ImGui::End();
 
 		ImGui::Render();

@@ -44,7 +44,26 @@ namespace Chess
 
 		m_ValidMoves.clear();
 		m_ValidMoves.reserve(m_Board.size() * 2);
+        m_Moves.clear();
 	}
+
+    void Engine::UndoLastMove()
+    {
+        if (m_Moves.empty())
+        {
+            return;
+        }
+        auto& engineMove = m_Moves.back();
+
+        auto& currentPosition = engineMove.move.currentPosition;
+        auto& prevPosition = engineMove.move.prevPosition;
+
+        m_Board[prevPosition.x][prevPosition.y] = m_Board[currentPosition.x][currentPosition.y];
+        m_Board[currentPosition.x][currentPosition.y] = engineMove.takenPiece;
+        m_TurnWhite = !m_TurnWhite;
+
+        m_Moves.pop_back();
+    }
 
 	bool Engine::MakeMove(const Move& move)
 	{
@@ -74,9 +93,13 @@ namespace Chess
 			if (validMovePosition == move.currentPosition)
 			{
 				// Implement takes piece
-				m_Board[move.prevPosition.x][move.prevPosition.y] = { PieceType_Blank };
+                auto prevPiece = m_Board[move.currentPosition.x][move.currentPosition.y];
+
+                m_Board[move.prevPosition.x][move.prevPosition.y] = { PieceType_Blank };
 				m_Board[move.currentPosition.x][move.currentPosition.y] = piece;
                 m_TurnWhite = !m_TurnWhite;
+
+                m_Moves.push_back({ move, prevPiece });
 				return true;
 			}
 		}
@@ -87,6 +110,7 @@ namespace Chess
 	const std::vector<Position>& Engine::GetValidMoves(const Position& position)
 	{
 		m_ValidMoves.clear();
+
 		if (position.x >= m_Board.size() || position.y >= m_Board.size())
 		{
 			return m_ValidMoves;
@@ -159,7 +183,7 @@ namespace Chess
 		
 		for (uint8_t y = position.y + 1; y <= static_cast<uint8_t>(position.y + (length - 1)); y++)
 		{
-			if (!CheckObstacle(validMoves, myPiece, {position.x, y}, canTake))
+			if (!CheckObstacle(validMoves, myPiece, { position.x, y }, canTake))
 			{
 				break;
 			}
@@ -273,7 +297,7 @@ namespace Chess
 			if (IsValidPiece(opposingPiece.type) &&
 				myPiece.color == InvertPieceColor(opposingPiece.color))
 			{
-				m_ValidMoves.push_back(newPosition);
+				m_ValidMoves.push_back(newPosition); // find a way to return the valid move instead of mutating the class object
 			}
 		};
 

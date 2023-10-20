@@ -4,6 +4,7 @@
 #include <condition_variable>
 #include <mutex>
 #include <optional>
+#include "Log.h"
 
 namespace Schism::System
 {
@@ -151,6 +152,10 @@ namespace Schism::System
 
                 for (typename std::queue<T>::size_type i = 0; i < count; i++)
                 {
+                    if (m_Queue.empty())
+                    {
+                        return;
+                    }
                     T obj = m_Queue.front();
                     m_Queue.pop();
                     functor(std::move(obj));

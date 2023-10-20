@@ -14,17 +14,49 @@ namespace Chess
           {
                 SC_CORE_INFO("(Chess/Game) Got move event");
 				// check the game id
+                // Don't accept moves if we are not waiting for a move
+                // Handle when move is not validated
+
+                if (!m_State.waitingForMove)
+                {
+                    SC_CORE_WARN("(Chess/Game) Got move when we were waiting for move");
+                    return;
+                }
+
                 m_Engine.MakeMove(gameMove.move);
+                m_State.waitingForMove = false;
           });
 
         ListenGameEvent<Net::EnterGame>([this](Net::EnterGame&& e)
            {
                 m_State.isWhite = e.isWhite;
-				m_State.gameId = e.gameId;
+                m_State.waitingForMove = !e.isWhite;
+                m_State.gameId = e.gameId;
                 m_Engine.Reset();
            });
+
+        ListenGameEvent<Net::SuccessfulMove>([this](Net::SuccessfulMove&& e)
+         {
+                if (e.gameId != m_State.gameId)
+                {
+                    return; // todo:: Handle multiple games
+                }
+
+                if (e.moveCount == m_State.moveCount)
+                {
+                    m_State.moveValidated = true;
+                }
+         });
 	}
 
+    void Game::UndoMove()
+    {
+        m_Engine.UndoLastMove();
+    }
+
+
+    // a bit ugly
+    // TODO: refactor this
 	void Game::ProcessInput(Schism::Event& e)
 	{
 		switch (e.GetEventType())
@@ -32,9 +64,9 @@ namespace Chess
 		case Schism::MouseButtonPressedEvent::GetStaticType():
 		{
 			const auto& board = m_Engine.GetBoardState();
-			Schism::MouseButtonPressedEvent evt = static_cast<Schism::MouseButtonPressedEvent&>(e);
+			Schism::MouseButtonPressedEvent evt = dynamic_cast<Schism::MouseButtonPressedEvent&>(e);
 			auto& pos = evt.GetPosition();
-			auto&& boardPosition = FindBoardPositionFromCoord(pos.x, pos.y);
+			auto boardPosition = FindBoardPositionFromCoord(pos.x, pos.y);
 
 			if (boardPosition.x > board.size() || boardPosition.y > board.size())
 			{
@@ -89,12 +121,17 @@ namespace Chess
 				m_State.pieceSelected = false;
 				m_ValidMoves = {};
 
-				m_Engine.MakeMove(m); // Temporary
+                if (m_State.waitingForMove)
+                {
+                    return;
+                }
 
+                m_Engine.MakeMove(m); // Temporary
                 SC_CORE_INFO("Sending move to networkSendBus");
 				Net::GameMove gameMove{ m_State.gameId, m };
-                m_NetworkSendBus.PostEvent<Net::GameMove>(gameMove);
-
+                //m_NetworkSendBus.PostEvent<Net::GameMove>(gameMove);
+                m_State.waitingForMove = true;
+                m_State.moveValidated = false;
 				return;
 			}
 

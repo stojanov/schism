@@ -4,6 +4,7 @@
 #include "chess/Common.h"
 #include "msgpack/msgpack.hpp"
 #include <type_traits>
+
 namespace Chess::Net
 {
 
@@ -14,14 +15,9 @@ namespace Chess::Net
         ENTER_GAME,
         REQUEST_GAME,
         GAME_MOVE,
+        SUCCESSFUL_MOVE,
+        FAILED_MOVE,
         COUNT
-    };
-
-    template<typename T, typename U>
-    concept GameMoveConcept = requires(T && obj, U arg) {
-        //{ std::declval<T>().pack(std::declval<typename std::remove_reference<T>::type>()) };
-        { obj.pack(msgpack::Packer&) };
-        { obj.Type() } -> std::same_as<MessageType>;
     };
 
     inline void PrependMessageType(std::vector<uint8_t>& vec, MessageType type) noexcept
@@ -36,15 +32,17 @@ namespace Chess::Net
     }
 
     template<typename T>
-    inline std::vector<uint8_t> PackMessage(T& data, MessageType type)
+    inline std::vector<uint8_t> PackMessage(T& data)
     {
         auto packed = msgpack::pack(data);
-        PrependMessageType(packed, type);
+        PrependMessageType(packed, data.Type());
         return std::move(packed);
     }
 
     struct RequestGame
-    {};
+    {
+        int k{ 0 };
+    };
 
     struct EnterGame
     {
@@ -52,7 +50,7 @@ namespace Chess::Net
         uint64_t otherPlayerId; // might be needed
         bool isWhite;
 
-        static constexpr MessageType Type()
+        inline static constexpr MessageType Type()
         {
             return ENTER_GAME;
         }
@@ -66,17 +64,51 @@ namespace Chess::Net
 
     struct GameMove
     {
-        uint64_t gameId;
+        uint64_t gameId{ 0 };
         Move move;
 
-        static constexpr MessageType Type()
+        inline static constexpr MessageType Type()
         {
             return GAME_MOVE;
         }
 
-        void pack(msgpack::Packer& p)
+        template<typename T>
+        void pack(T& p)
         {
             p(gameId, move);
+        }
+    };
+
+    struct SuccessfulMove
+    {
+        uint16_t moveCount{ 0 };
+        uint64_t gameId{ 0 };
+
+        inline static constexpr MessageType Type()
+        {
+            return SUCCESSFUL_MOVE;
+        }
+
+        template<typename T>
+        void pack(T& p)
+        {
+            p(moveCount, gameId);
+        }
+    };
+
+    struct FailedMove
+    {
+        uint64_t gameId{ 0 };
+
+        inline static constexpr MessageType Type()
+        {
+            return FAILED_MOVE;
+        }
+
+        template<typename T>
+        void pack(T& p)
+        {
+            p(gameId);
         }
     };
 }
