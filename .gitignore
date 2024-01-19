@@ -5,3 +5,7 @@ cmake-build-debug/
 cmake-build-release-visual-studio/
 cmake-build-debug-visual-studio/
 .idea/
+build/
+compile_commands.json
+.cache/
+

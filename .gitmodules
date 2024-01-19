@@ -29,3 +29,9 @@
 [submodule "vendor/asio"]
 	path = vendor/asio
 	url = https://github.com/chriskohlhoff/asio.git
+[submodule "vendor/openal"]
+	path = vendor/openal
+	url = https://github.com/kcat/openal-soft.git
+[submodule "vendor/audio-file"]
+	path = vendor/audio-file
+	url = https://github.com/adamstark/AudioFile

@@ -8,6 +8,7 @@ option(GLFW_BUILD_TESTS OFF)
 add_subdirectory(vendor/GLFW)
 add_subdirectory(vendor/spdlog)
 add_subdirectory(vendor/entt)
+add_subdirectory(vendor/openal)
 
 set(CMAKE_CXX_STANDARD 20)
 
@@ -37,6 +38,7 @@ include_directories(
                     vendor/atomic_queue/include/
                     vendor/cppack/include/
                     vendor/asio/asio/include/
+                    vendor/audio-file/
                     src/)
 
 file(GLOB STB_SRC vendor/stb/*.c)
@@ -78,7 +80,7 @@ add_executable(${PROJECT_NAME}
                     ${PROJECT_CONFIGS})
 
 target_link_libraries(${PROJECT_NAME} glfw
-                      ${GLFW_LIBRARIES} ${GLAD_LIBRARIES})
+    ${GLFW_LIBRARIES} ${GLAD_LIBRARIES} OpenAL::OpenAL)
 
 # Not sure if this will work on linux as the default output bin dir might be different
 # will have to test it
