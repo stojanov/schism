@@ -8,6 +8,8 @@ option(GLFW_BUILD_TESTS OFF)
 add_subdirectory(vendor/GLFW)
 add_subdirectory(vendor/spdlog)
 add_subdirectory(vendor/entt)
+set(FT_DISABLE_HARFBUZZ TRUE)
+add_subdirectory(vendor/freetype)
 
 set(CMAKE_CXX_STANDARD 17)
 
@@ -91,8 +93,11 @@ add_executable(${PROJECT_NAME}
                     ${IMGUI_GLFW_HEADERS}
                     ${PROJECT_CONFIGS})
 
-target_link_libraries(${PROJECT_NAME} glfw
-                      ${GLFW_LIBRARIES} ${GLAD_LIBRARIES})
+target_link_libraries(${PROJECT_NAME}
+                      glfw
+                      ${GLFW_LIBRARIES}
+                      ${GLAD_LIBRARIES}
+                      freetype)
 
 # Not sure if this will work on linux as the default output bin dir might be different
 # will have to test it
