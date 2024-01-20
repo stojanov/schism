@@ -9,9 +9,8 @@
 
 namespace Schism::Core
 {
-	Window::Window()
+	Window::Window() : m_WindowPtr(nullptr), m_LoadWinPtr(nullptr), m_Data()
 	{
-		m_Data.Input.PressedKeys.fill(false);
 	}
 
 	Window::~Window()
