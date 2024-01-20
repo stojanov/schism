@@ -44,7 +44,7 @@ jobs:
       # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
       run: ctest -C ${{env.BUILD_TYPE}}
   build-windows:
-      runs-on: ubuntu-latest
+      runs-on: windows-latest
 
       steps:
       - name: Git checkout
