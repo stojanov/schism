@@ -3,6 +3,7 @@
 #include <entt/entt.hpp>
 
 #include "AssetManager.h"
+#include "schism/Audio/Source.h"
 #include "schism/Gl/Shader.h"
 #include "schism/Renderer/Texture.h"
 #include "schism/System/FileIO.h"
@@ -29,10 +30,21 @@ namespace Schism::Core
 		}
 	};
 
+    struct AudioLoader
+    {
+        using result_type = Ref<Audio::Source>;
+
+        result_type operator()(const std::string& filepath)
+        {
+            return Audio::Source::Create(filepath);
+        }
+    };
+
 	struct Assets
 	{
 		AssetManager<Renderer::Texture, TextureLoader> Textures;
 		AssetManager<Gl::Shader, ShaderLoader> Shaders;
+        AssetManager<Audio::Source, AudioLoader> Audio; 
 	};
 	
 }

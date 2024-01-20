@@ -25,7 +25,7 @@ public:
     bool Load();
     const Header& Header();
     const std::vector<char>& Data();
-
+    char* data2() { return data; };
 private:
     std::int32_t buffer_to_int(char* buffer, std::size_t size);
     void readIntoBuffer(char* buffer, std::size_t size);
@@ -35,6 +35,7 @@ private:
     std::ifstream m_file;
     std::filesystem::path m_filepath;
     std::vector<char> m_data;
+    char* data;
     struct Header m_header;
 };
 

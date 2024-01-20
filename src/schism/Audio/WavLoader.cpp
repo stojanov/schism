@@ -141,7 +141,6 @@ bool WavLoader::readHeader()
 bool WavLoader::readData()
 {
     m_data.resize(m_header.size);
-
     if (!m_file.read(&m_data[0], m_header.size))
     {
         SC_CORE_TRACE("Error reading wav file: {}", m_filepath.string());

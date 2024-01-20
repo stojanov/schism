@@ -39,6 +39,7 @@ include_directories(
                     vendor/cppack/include/
                     vendor/asio/asio/include/
                     vendor/audio-file/
+                    vendor/dr_libs/
                     src/)
 
 file(GLOB STB_SRC vendor/stb/*.c)
