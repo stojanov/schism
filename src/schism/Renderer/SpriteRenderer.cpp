@@ -7,6 +7,7 @@ namespace Schism
 	Ref<Gl::VertexBuffer> SpriteRenderer::s_VertBuff;
 	Ref<Gl::VertexArray> SpriteRenderer::s_VertexArray;
 	Resources::ShaderHandle SpriteRenderer::s_Shader;
+	glm::mat4 SpriteRenderer::m_Projection;
 
 	void SpriteRenderer::Init(Resources::ShaderHandle shader)
 	{
@@ -47,6 +48,11 @@ namespace Schism
 		s_Shader = shader;
 	}
 
+	void SpriteRenderer::BeginScene(const glm::mat4& proj)
+	{
+		m_Projection = proj;
+	}
+
 	void SpriteRenderer::Draw(Components::Transform2D& transformComponent, Components::Sprite& spriteComponent, const glm::mat4& proj)
 	{
 		glm::mat4 transform = glm::translate(glm::mat4(1.f), glm::vec3(transformComponent.position, 0.f));
@@ -65,5 +71,11 @@ namespace Schism
 		s_VertexArray->Bind();
 		glDrawArrays(GL_TRIANGLES, 0, 6);
 	}
+
+	void SpriteRenderer::Draw(Components::Transform2D& transform, Components::Sprite& sprite)
+	{
+		Draw(transform, sprite, m_Projection);
+	}
+
 	
 }

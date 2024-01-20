@@ -23,3 +23,18 @@
 [submodule "vendor/entt"]
 	path = vendor/entt
 	url = https://github.com/skypjack/entt.git
+[submodule "vendor/atomic_queue"]
+	path = vendor/atomic_queue
+	url = https://github.com/max0x7ba/atomic_queue.git
+[submodule "vendor/asio"]
+	path = vendor/asio
+	url = https://github.com/chriskohlhoff/asio.git
+[submodule "vendor/openal"]
+	path = vendor/openal
+	url = https://github.com/kcat/openal-soft.git
+[submodule "vendor/audio-file"]
+	path = vendor/audio-file
+	url = https://github.com/adamstark/AudioFile
+[submodule "vendor/dr_libs"]
+	path = vendor/dr_libs
+	url = https://github.com/mackron/dr_libs.git

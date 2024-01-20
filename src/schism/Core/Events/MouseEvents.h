@@ -24,7 +24,7 @@ namespace Schism
 		Mouse::Button GetKey() const { return m_Btn; }
 		const glm::vec2& GetPosition() const { return m_Pos; }
 	private:
-		Mouse::Button m_Btn;
+		Mouse::Button m_Btn{ Mouse::Button::NONE };
 		glm::vec2 m_Pos;
 	};
 

@@ -9,6 +9,8 @@
 #include "schism/System/System.h"
 #include "schism/Core/Events/WindowEvents.h"
 #include "schism/Renderer/Renderer2D.h"
+#include "AL/al.h"
+#include "AL/alc.h"
 
 namespace Schism
 {
@@ -40,10 +42,19 @@ namespace Schism
 		
 		Renderer::API::Init();
 		
+        ALCdevice* aldevice = alcOpenDevice(nullptr);
+        ALCcontext* context = alcCreateContext(aldevice, nullptr);
+
+        if (!alcMakeContextCurrent(context))
+        {
+            SC_CORE_ERROR("Cannot create context");
+            return;
+        }
+
 		SC_CORE_INFO("Schism succesfully initialized");
-		SC_CORE_INFO("Gpu - {0} {1}", glGetString(GL_VENDOR), glGetString(GL_RENDERER));
-		SC_CORE_INFO("Driver - {0}", glGetString(GL_VERSION));
-		SC_CORE_INFO("Shader Version - {0}", glGetString(GL_SHADING_LANGUAGE_VERSION));
+		//SC_CORE_INFO("Gpu - {0} {1}", glGetString(GL_VENDOR), glGetString(GL_RENDERER));
+		//SC_CORE_INFO("Driver - {0}", glGetString(GL_VERSION));
+		//SC_CORE_INFO("Shader Version - {0}", glGetString(GL_SHADING_LANGUAGE_VERSION));
 		SC_CORE_INFO("Processor count - {0}", std::thread::hardware_concurrency());
 
 		// TEMPPPPP !!!
