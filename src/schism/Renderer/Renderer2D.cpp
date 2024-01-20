@@ -195,11 +195,13 @@ namespace Schism
 		int texIndex = -1;
 		for (auto& [slot, savedTexture] : s_RenderData.Textures)
 		{
+			/* Temporary commented, this should be reworked!
 			if (*savedTexture == *texture)
 			{
 				texIndex = slot;
 				break;
 			}
+			*/
 		}
 		if (texIndex == -1)
 		{
