@@ -39,3 +39,6 @@
 	path = vendor/entt
 	url = https://github.com/skypjack/entt
 	branch = v3.13.x
+[submodule "vendor/imguizmo"]
+	path = vendor/imguizmo
+	url = https://github.com/CedricGuillemet/ImGuizmo.git

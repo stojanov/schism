@@ -1,0 +1,21 @@
+{
+    "name": "schism",
+    "dependencies" : [
+        "glfw3",
+        "openal-soft",
+        "glad",
+        "asio",
+        "entt",
+        "glm",
+        "stb",
+        "spdlog",
+        {
+            "name": "imgui",
+            "features": [
+                "glfw-binding",
+                "opengl3-binding"
+            ]
+        },
+        "imguizmo"
+    ]
+}

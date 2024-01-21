@@ -1,6 +1,7 @@
 out/
 .vs/
 cmake-build-release/
+bin/
 cmake-build-debug/
 cmake-build-release-visual-studio/
 cmake-build-debug-visual-studio/
