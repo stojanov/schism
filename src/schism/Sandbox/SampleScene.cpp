@@ -31,7 +31,6 @@ void SampleScene::OnAttach()
 
 	transfrom.position = { 200.f, 200.f, 0.f };
 	transfrom.scale = { 200.f, 200.f };
-    SC_CORE_INFO("ATTACh");
 }
 
 void SampleScene::OnDetach()
@@ -62,7 +61,6 @@ void SampleScene::OnDraw()
 {
 	auto view = m_Registry.view<Components::Transform2D, Components::Sprite>();
     int i = 0;
-    SC_CORE_INFO("RENDERING");
 	for (auto e : view)
 	{
 		const auto& [transfrom, sprite] = m_Registry.get<Components::Transform2D, Components::Sprite>(e);

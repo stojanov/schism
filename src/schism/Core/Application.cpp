@@ -108,14 +108,14 @@ namespace Schism
 			m_Ctx->window->ProcessEvents();
 			m_SceneManager.OnUpdate(ts);
 
-            // ImGui_ImplOpenGL3_NewFrame();
-            // ImGui_ImplGlfw_NewFrame();
-            // ImGui::NewFrame();
+            ImGui_ImplOpenGL3_NewFrame();
+            ImGui_ImplGlfw_NewFrame();
+            ImGui::NewFrame();
 
 			m_SceneManager.OnDraw();
             
-            // ImGui::Render();
-            // ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+            ImGui::Render();
+            ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
 			m_Ctx->window->Swap();
 		}
