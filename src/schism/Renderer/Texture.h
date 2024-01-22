@@ -17,6 +17,7 @@ namespace Schism::Renderer
 		~Texture();
 
 		void SetData(uint8_t* data, uint32_t size);
+        void SetSubData(uint8_t *data, uint32_t x_offset, uint32_t y_offset, uint32_t width, uint32_t height);
         static Ref<Texture> CreateRef(std::int32_t width, std::int32_t height, std::int8_t num_channels, GLenum format);
 		static Ref<Texture> CreateRef(const std::string& path, bool pixelart = false);
 		void Bind(uint8_t slot);
@@ -85,5 +86,5 @@ namespace Schism::Renderer
 		int m_Width;
 		int m_Height;
 		int m_ChannelCount;
-	};
+    };
 }

@@ -83,6 +83,11 @@ namespace Schism::Renderer
 		glTexImage2D(GL_TEXTURE_2D, 0, m_Format, m_Width, m_Height, 0, m_Format, GL_UNSIGNED_BYTE, data);
 	}
 
+    void Texture::SetSubData(uint8_t* data, uint32_t x_offset, uint32_t y_offset, uint32_t width, uint32_t height)
+    {
+        glTextureSubImage2D(m_TextureID, 0, x_offset, y_offset, width, height, m_Format, GL_UNSIGNED_BYTE, data);
+    }
+
 	void Texture::Bind(uint8_t slot)
 	{
 		glActiveTexture(GetTexSlot(slot));
