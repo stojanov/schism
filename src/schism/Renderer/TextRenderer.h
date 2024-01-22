@@ -21,8 +21,11 @@ namespace Schism
         FT_Face face;
         uint8_t pointSize;
         std::vector<FontCharacter> characters;
+
         std::uint32_t atlas_width;
         std::uint32_t atlas_height;
+        Ref<Renderer::Texture> atlas;
+        uint32_t atlas_texture_index;
     };
 
     class TextRenderer

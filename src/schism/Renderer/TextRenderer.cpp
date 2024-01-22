@@ -107,7 +107,8 @@ namespace Schism
     {
         assert(!font.characters.empty());
 
-        atlas->Bind(0); // TODO: which binding point should we use actually?
+        atlas->Bind(font.atlas_texture_index);
+        glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
         std::uint32_t rolling_x = 0;
         for (auto &character : font.characters)
