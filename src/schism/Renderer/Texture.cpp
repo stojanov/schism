@@ -17,8 +17,12 @@ namespace Schism::Renderer
 	}
 
     Texture::Texture(std::int32_t width, std::int32_t height, std::int8_t num_channels, GLenum format)
-        : m_Width(width), m_Height(height), m_ChannelCount(num_channels), m_Format(format)
+        : Texture()
     {
+        m_Width = width;
+        m_Height = height;
+        m_ChannelCount = num_channels;
+        m_Format = format;
     }
 
 	Texture::Texture(const std::string& path, bool pixelart)
@@ -44,7 +48,6 @@ namespace Schism::Renderer
 
 		glCreateTextures(GL_TEXTURE_2D, 1, &m_TextureID);
 		glBindTexture(GL_TEXTURE_2D, m_TextureID);
-
 
 		GLint filtering = GL_LINEAR;
 
