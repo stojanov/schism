@@ -1,9 +1,6 @@
 #include "TextRenderer.h"
 #include <freetype/freetype.h>
 
-// TODO: change usages to Schism logging func
-#include <iostream>
-
 namespace Schism
 {
     FT_Library TextRenderer::m_library = {};
@@ -12,8 +9,7 @@ namespace Schism
     {
         if (FT_Init_FreeType(&m_library))
         {
-            std::cout << "Failed to initialize Freetype library!" << std::endl;
-            std::exit(-1);
+            SC_CORE_ERROR("Failed to initialize Freetype library!");
         }
     }
 
@@ -21,13 +17,13 @@ namespace Schism
     {
         if (FT_Done_FreeType(m_library))
         {
-            std::cout << "Failed to destroy Freetype library object!" << std::endl;
-            std::exit(-1);
+            SC_CORE_ERROR("Failed to destroy Freetype library object!");
         }
     }
 
     Font TextRenderer::LoadFontFace(const std::string &fontPath)
     {
+        const std::wstring character_map = L"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+-=[]\\;',./{}|:\"<>?;";
         constexpr uint8_t font_horizontal_resolution = 96;
         constexpr uint8_t font_vertical_resolution = 96;
 
@@ -37,14 +33,15 @@ namespace Schism
         FT_Face font_face;
         if (FT_New_Face(m_library, fontPath.c_str(), -1, &font_face))
         {
-            std::cout << "ERROR: The following font family is not recognized by Freetype: " << fontPath << std::endl;
+            SC_CORE_ERROR("The following font family is not recognized by Freetype: {}. Returning empty font...", fontPath);
+            SC_CORE_ERROR("Returning empty font...");
             return result_font;
         }
 
         std::uint16_t num_faces = font_face->num_faces;
         if (FT_Done_Face(font_face))
         {
-            std::cout << "ERROR: Failed to discard font face object!" << std::endl;
+            SC_CORE_ERROR("Failed to discard font face object! Returning empty font...");
             return result_font;
         }
 
@@ -54,13 +51,13 @@ namespace Schism
             FT_Face current_face;
             if (FT_New_Face(m_library, fontPath.c_str(), face_index_final, &current_face))
             {
-                std::cout << "Failed to load font face #" << face_index_final << " from font " << fontPath << std::endl;
+                SC_CORE_ERROR("Failed to load font face #{} from font {}. Returning empty font...", face_index_final, fontPath);
                 return result_font;
             }
 
             if (FT_Set_Char_Size(current_face, 0, result_font.pointSize * 64, font_horizontal_resolution, font_vertical_resolution))
             {
-                std::cout << "Failed to set char size for font face!" << std::endl;
+                SC_CORE_ERROR("Failed to set char size for font face!");
             }
 
             result_font.face = current_face;
@@ -73,11 +70,9 @@ namespace Schism
         FT_Face face = result_font.face;
         if (face == nullptr)
         {
-            std::cout << "ERROR: No font face found! Not proceeding with texture atlas generation." << std::endl;
+            SC_CORE_ERROR("No font face found! Not proceeding with texture atlas generation, and returning empty font...");
             return result_font;
         }
-
-        std::wstring character_map = L"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+-=[]\\;',./{}|:\"<>?;";
 
         result_font.characters.reserve(character_map.size());
         result_font.atlas_width = 0; result_font.atlas_height = 0;
@@ -86,7 +81,7 @@ namespace Schism
         {
             if (FT_Load_Char(face, c, FT_LOAD_BITMAP_METRICS_ONLY))
             {
-                std::cout << "Failed to load character " << c << std::endl;
+                SC_CORE_ERROR("Failed to load character {}", c);
                 continue;
             }
 
@@ -119,7 +114,7 @@ namespace Schism
         {
             if (FT_Load_Glyph(font.face, character.char_index, FT_LOAD_RENDER))
             {
-                std::cout << "Failed to load character " << static_cast<char>(character.char_index) << std::endl;
+                SC_CORE_ERROR("Failed to load character {}, skipping.", static_cast<char>(character.char_index));
                 continue;
             }
 
