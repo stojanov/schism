@@ -16,6 +16,11 @@ namespace Schism::Renderer
 		glTextureParameteri(m_TextureID, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	}
 
+    Texture::Texture(std::int32_t width, std::int32_t height, std::int8_t num_channels, GLenum format)
+        : m_Width(width), m_Height(height), m_ChannelCount(num_channels), m_Format(format)
+    {
+    }
+
 	Texture::Texture(const std::string& path, bool pixelart)
 	{
 		//stbi_set_flip_vertically_on_load(1);
@@ -66,6 +71,11 @@ namespace Schism::Renderer
 	{
 		return MakeRef<Texture>(path, pixelart);
 	}
+
+    Ref<Texture> Texture::CreateRef(std::int32_t width, std::int32_t height, std::int8_t num_channels, GLenum format)
+    {
+        return MakeRef<Texture>(width, height, num_channels, format);
+    }
 
 	void Texture::SetData(uint8_t* data, uint32_t size)
 	{
