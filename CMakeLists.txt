@@ -19,6 +19,8 @@ find_package(OpenAL CONFIG REQUIRED)
 find_package(spdlog CONFIG REQUIRED)
 find_package(asio CONFIG REQUIRED)
 find_package(Stb REQUIRED)
+find_package(sol2 CONFIG REQUIRED)
+find_package(lua REQUIRED)
 
 set(CMAKE_CXX_STANDARD 20)
 
@@ -58,6 +60,7 @@ include_directories(
                     vendor/atomic_queue/include/
                     vendor/cppack/include/
                     ${Stb_INCLUDE_DIR}
+                    ${LUA_INCLUDE_DIR}
                     src/)
 
 
@@ -78,7 +81,7 @@ add_definitions(-DGLFW_INCLUDE_NONE
                 -DPROJECT_SOURCE_DIR=\"${PROJECT_SOURCE_DIR}\")
 
 add_executable(${PROJECT_NAME}
-                    ${SOURCES} 
+                    ${SOURCES}
                     ${PROJECT_CONFIGS})
 
 target_link_libraries(${PROJECT_NAME} PRIVATE
@@ -91,6 +94,8 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     imguizmo::imguizmo
     OpenAL::OpenAL
     spdlog::spdlog
+    sol2
+    ${LUA_LIBRARIES}
 )
 
 set(OUTPUT_DIR ${CMAKE_SOURCE_DIR}/bin/)
