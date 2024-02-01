@@ -8,6 +8,7 @@
         "asio",
         "entt",
         "glm",
+        "parallel-hashmap",
         "stb",
         "spdlog",
         {

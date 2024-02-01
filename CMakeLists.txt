@@ -21,6 +21,7 @@ find_package(asio CONFIG REQUIRED)
 find_package(Stb REQUIRED)
 find_package(sol2 CONFIG REQUIRED)
 find_package(lua REQUIRED)
+find_path(PARALLEL_HASHMAP_INCLUDE_DIRS "parallel_hashmap/btree.h")
 
 set(CMAKE_CXX_STANDARD 20)
 
@@ -97,6 +98,8 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     sol2
     ${LUA_LIBRARIES}
 )
+
+target_include_directories(${PROJECT_NAME} PRIVATE ${PARALLEL_HASHMAP_INCLUDE_DIRS})
 
 set(OUTPUT_DIR ${CMAKE_SOURCE_DIR}/bin/)
 
