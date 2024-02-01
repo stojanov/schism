@@ -2,7 +2,7 @@
 
 #include <glm/ext/matrix_transform.hpp>
 
-#include "phmap.h"
+#include <parallel_hashmap/phmap.h>
 #include "schism/Core/ResourceGlobals.h"
 #include "schism/Gl/VertexArray.h"
 #include "schism/Gl/VertexBuffer.h"
