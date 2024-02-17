@@ -1,6 +1,10 @@
 #!/bin/bash
 
-cmake --build build  
-cd build/schism
-./schism
-cd ../..
+if cmake --build build; then
+    ./copy_res.sh
+    cd bin
+    ./schism
+    cd ..
+else
+    echo BUILD FAILED    
+fi

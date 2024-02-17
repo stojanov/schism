@@ -8,10 +8,8 @@
 #include <AL/alc.h>
 #include <chrono>
 #include <filesystem>
-#include <AudioFile.h>
 #include <thread>
-#define DR_WAV_IMPLEMENTATION
-#include <dr_wav.h>
+#include "schism/Sandbox/SampleScene.h"
 
 void checkForError()
 {
@@ -30,8 +28,8 @@ Game::Game()
     m_Ctx->GlobalAssets.Audio.Load("testaudio", "res/sample-3s.wav");
 
 	SpriteRenderer::RegisterShader(m_Ctx->GlobalAssets.Shaders.GetHandle("spriterenderer"));
-
-	m_SceneManager.Register<Chess::Chess>("chess");
+    m_SceneManager.Register<SampleScene>("sample scene");
+	// m_SceneManager.Register<Chess::Chess>("chess");
 
     ALfloat listenerOri[] = { 0.f, 0.f, 1.f, 0.f, 1.f, 0.f };
 

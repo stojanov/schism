@@ -2,7 +2,7 @@
 #include "al.h"
 #include "schism/Audio/WavLoader.h"
 #include "schism/System/Ptr.h"
-#include "glm.hpp"
+#include <glm/glm.hpp>
 
 namespace Schism::Audio {
 
