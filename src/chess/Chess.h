@@ -29,7 +29,7 @@ namespace Chess
 	private:
         Schism::GameEvent::CallbackBus m_NetworkSendBus;
         Schism::GameEvent::CallbackBus m_NetworkReceiveBus;
-        std::jthread m_GameClientThread;
+        std::thread m_GameClientThread;
 		Core::Assets m_Assets;
 		BoardRenderer m_BoardRenderer;
 		std::shared_ptr<Game> m_Game;

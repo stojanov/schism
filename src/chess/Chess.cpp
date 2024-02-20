@@ -55,7 +55,7 @@ namespace Chess
 
 	void Chess::OnAttach()
 	{
-        m_GameClientThread = std::jthread([this]()
+        m_GameClientThread = std::thread([this]()
                                           {
                                                 m_GameClient->Start();
                                           });

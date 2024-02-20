@@ -7,13 +7,14 @@ namespace Schism::Renderer
 {
 	Texture::Texture()
 	{
-		glCreateTextures(GL_TEXTURE_2D, 1, &m_TextureID);
+		glGenTextures( 1, &m_TextureID);
+		glBindTexture(GL_TEXTURE_2D, m_TextureID);
 
-		glTextureParameteri(m_TextureID, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTextureParameteri(m_TextureID, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTexParameteri(m_TextureID, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(m_TextureID, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
-		glTextureParameteri(m_TextureID, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTextureParameteri(m_TextureID, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		glTexParameteri(m_TextureID, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(m_TextureID, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	}
 
 	Texture::Texture(const std::string& path, bool pixelart)
@@ -37,7 +38,7 @@ namespace Schism::Renderer
 			m_Format = GL_RGBA;
 		}
 
-		glCreateTextures(GL_TEXTURE_2D, 1, &m_TextureID);
+		glGenTextures(1, &m_TextureID);
 		glBindTexture(GL_TEXTURE_2D, m_TextureID);
 
 
@@ -48,11 +49,11 @@ namespace Schism::Renderer
 			filtering = GL_NEAREST;
 		}
 
-		glTextureParameteri(m_TextureID, GL_TEXTURE_MIN_FILTER, filtering);
-		glTextureParameteri(m_TextureID, GL_TEXTURE_MAG_FILTER, filtering);
+		glTexParameteri(m_TextureID, GL_TEXTURE_MIN_FILTER, filtering);
+		glTexParameteri(m_TextureID, GL_TEXTURE_MAG_FILTER, filtering);
 
-		glTextureParameteri(m_TextureID, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTextureParameteri(m_TextureID, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		glTexParameteri(m_TextureID, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(m_TextureID, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
 		// Can be done with glTextureSubImage2D
 		//glTextureSubImage2D(GL_TEXTURE_2D, 0, 0, 0, m_Width, m_Height, m_Format, GL_UNSIGNED_BYTE, data);

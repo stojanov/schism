@@ -4,7 +4,7 @@ namespace Schism::Gl
 {
 	VertexArray::VertexArray()
 	{
-		glCreateVertexArrays(1, &m_ID);
+		glGenVertexArrays(1, &m_ID);
 	}
 
 	VertexArray::~VertexArray()
