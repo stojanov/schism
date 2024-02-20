@@ -103,7 +103,7 @@ void EditTransform(const Renderer::OrthographicCamera& camera, const glm::mat4& 
     static bool useSnap(false);
     if (ImGui::IsKeyPressed(ImGuiKey_S))
         useSnap = !useSnap;
-    ImGui::Checkbox("", &useSnap);
+    ImGui::Checkbox("Use Snap", &useSnap);
     ImGui::SameLine();
     ImGuiIO& io = ImGui::GetIO();
     ImGuizmo::SetRect(0, 0, io.DisplaySize.x, io.DisplaySize.y);
@@ -133,6 +133,7 @@ void SampleScene::OnDraw()
 		const auto& [transfrom, sprite] = m_Registry.get<Components::Transform2D, Components::Sprite>(e);
         const glm::mat4 mat = glm::translate(glm::mat4(1.f), transfrom.position);
         ImGuizmo::SetID(i);
+
         // ImGuizmo::DrawCubes(glm::value_ptr(m_Camera.GetViewMatrix()), glm::value_ptr(m_Camera.GetProjectionMatrix()), glm::value_ptr(mat), 1);
 		m_Renderer.Draw(transfrom, sprite, m_Camera.GetViewProjectionMatrix());
         EditTransform(m_Camera, mat, transfrom);

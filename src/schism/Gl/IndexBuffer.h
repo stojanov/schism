@@ -28,7 +28,7 @@ namespace Schism::Gl
 	private:
 		void CreateBuffer()
 		{
-			glCreateBuffers(1, &m_BufferID);
+			glGenBuffers(1, &m_BufferID);
 			// Used GL_ARRAY_BUFFER so i can load data without an active VAO
 			glBindBuffer(GL_ARRAY_BUFFER, m_BufferID);
 		}

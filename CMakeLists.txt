@@ -5,6 +5,12 @@ option(GLFW_BUILD_DOCS OFF)
 option(GLFW_BUILD_EXAMPLES OFF)
 option(GLFW_BUILD_TESTS OFF)
 
+# Hardcode the architecture to arm64 on macOS
+if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+    set(MACOSX TRUE)
+    set(CMAKE_OSX_ARCHITECTURES "arm64")
+endif()
+
 # set(CMAKE_TOOLCHAIN_FILE $ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake)
 # find_package(glfw3 CONFIG REQUIRED)
 include($ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake)

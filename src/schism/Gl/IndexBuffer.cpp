@@ -4,20 +4,20 @@ namespace Schism::Gl
 {
 	IndexBuffer::IndexBuffer()
 	{
-		glCreateBuffers(1, &m_BufferID);
+		glGenBuffers(1, &m_BufferID);
 		glBindBuffer(GL_ARRAY_BUFFER, m_BufferID);
 	}
 
 	IndexBuffer::IndexBuffer(uint32_t* indices, uint32_t count)
 	{
-		glCreateBuffers(1, &m_BufferID);
+		glGenBuffers(1, &m_BufferID);
 		glBindBuffer(GL_ARRAY_BUFFER, m_BufferID);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, count * sizeof(uint32_t), indices, GL_DYNAMIC_DRAW);
 	}
 
 	IndexBuffer::IndexBuffer(std::vector<uint32_t>& indices)
 	{
-		glCreateBuffers(1, &m_BufferID);
+		glGenBuffers(1, &m_BufferID);
 		glBindBuffer(GL_ARRAY_BUFFER, m_BufferID);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(uint32_t), &indices[0], GL_DYNAMIC_DRAW);
 	}

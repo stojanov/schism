@@ -55,7 +55,7 @@ namespace Chess
 
 	void Chess::OnAttach()
 	{
-        m_GameClientThread = std::jthread([this]()
+        m_GameClientThread = std::thread([this]()
                                           {
                                                 m_GameClient->Start();
                                           });
@@ -64,6 +64,7 @@ namespace Chess
 	void Chess::OnDetach()
 	{
         m_GameClient->Stop();
+        m_GameClientThread.join();
 	}
 
 	void Chess::OnPause()
