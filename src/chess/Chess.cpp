@@ -64,6 +64,7 @@ namespace Chess
 	void Chess::OnDetach()
 	{
         m_GameClient->Stop();
+        m_GameClientThread.join();
 	}
 
 	void Chess::OnPause()
