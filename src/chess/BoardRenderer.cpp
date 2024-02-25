@@ -34,7 +34,8 @@ namespace Chess
 		{
 			transform.position = {
 					m_PieceSize * position.x + m_Offset,
-					m_PieceSize * position.y + m_Offset
+					m_PieceSize * position.y + m_Offset,
+                    0.f
 			};
 			transform.scale = { m_PieceSize, m_PieceSize };
 
@@ -78,7 +79,8 @@ namespace Chess
 
 				transform.position = {
 					m_PieceSize * translatedX + m_Offset,
-					m_PieceSize * translatedY + m_Offset
+					m_PieceSize * translatedY + m_Offset,
+                    0.f,
 				};
 				transform.scale = { m_PieceSize, m_PieceSize };
 
@@ -86,7 +88,7 @@ namespace Chess
 			}
 		}
 
-		transform.position = { 0.f, 0.f };
+		transform.position = { 0.f, 0.f, 0.f };
 		transform.scale = { m_Width, m_Height };
 
 		Schism::SpriteRenderer::Draw(transform, m_Sprites.board);

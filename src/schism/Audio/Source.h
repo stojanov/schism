@@ -1,7 +1,7 @@
 #pragma once
 
 #include "al.h"
-#include "glm.hpp"
+#include <glm/glm.hpp>
 #include "schism/System/Ptr.h"
 #include <vector>
 #include <cstdint>

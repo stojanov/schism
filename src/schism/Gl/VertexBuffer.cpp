@@ -1,4 +1,5 @@
 #include "VertexBuffer.h"
+#include "schism/System/Log.h"
 
 #include <glad/glad.h>
 
@@ -6,7 +7,7 @@ namespace Schism::Gl
 {
 	void VertexBuffer::CreateBuffer()
 	{
-		glCreateBuffers(1, &m_BufferID);
+		glGenBuffers(1, &m_BufferID);
 		glBindBuffer(GL_ARRAY_BUFFER, m_BufferID);
 	}
 

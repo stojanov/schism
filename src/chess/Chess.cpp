@@ -4,8 +4,6 @@
 
 
 #include "imgui.h"
-#include "backends/imgui_impl_glfw.h"
-#include "backends/imgui_impl_opengl3.h"
 #include "schism/Components/Sprite.h"
 #include "schism/Renderer/SpriteRenderer.h"
 #include "Server/Messages.h"
@@ -57,7 +55,7 @@ namespace Chess
 
 	void Chess::OnAttach()
 	{
-        m_GameClientThread = std::jthread([this]()
+        m_GameClientThread = std::thread([this]()
                                           {
                                                 m_GameClient->Start();
                                           });
@@ -66,6 +64,7 @@ namespace Chess
 	void Chess::OnDetach()
 	{
         m_GameClient->Stop();
+        m_GameClientThread.join();
 	}
 
 	void Chess::OnPause()
@@ -91,9 +90,7 @@ namespace Chess
 
 	void Chess::OnDraw()
 	{
-		ImGui_ImplOpenGL3_NewFrame();
-		ImGui_ImplGlfw_NewFrame();
-		ImGui::NewFrame();
+     
 
 		SpriteRenderer::BeginScene(m_Camera.GetProjectionMatrix());
 		m_Game->DrawBoard();
@@ -109,9 +106,5 @@ namespace Chess
             m_Game->UndoMove();
         }
 		ImGui::End();
-
-		ImGui::Render();
-		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-	}
-
+    }
 }

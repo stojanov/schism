@@ -2,10 +2,11 @@
 
 #include "imgui.h"
 #include "Window.h"
-#include "backends/imgui_impl_glfw.h"
-#include "backends/imgui_impl_opengl3.h"
+#include "imgui_impl_glfw.h"
+#include "imgui_impl_opengl3.h"
 #include "GLFW/glfw3.h"
 #include "schism/Renderer/RenderAPI.h"
+#include "schism/System/Log.h"
 #include "schism/System/System.h"
 #include "schism/Core/Events/WindowEvents.h"
 #include "schism/Renderer/Renderer2D.h"
@@ -19,16 +20,19 @@ namespace Schism
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
+		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+		
 		Ref<Core::Window> Window = MakeRef<Core::Window>();
 		
 		Window->Create(w, h, name);
+    
 		Window->SetEventCallback([this](Event&& e)
 			{
 				OnEvent(e);
 			});
 		m_Ctx = CreateSharedContext(Window);
 
+    
 		m_Ctx->SceneManager.Switch = [this](const std::string& name)
 			{
 				m_SceneManager.Switch(name);
@@ -41,7 +45,7 @@ namespace Schism
 		m_SceneManager.InitContext(m_Ctx);
 		
 		Renderer::API::Init();
-		
+    
         ALCdevice* aldevice = alcOpenDevice(nullptr);
         ALCcontext* context = alcCreateContext(aldevice, nullptr);
 
@@ -51,10 +55,15 @@ namespace Schism
             return;
         }
 
+        auto vendor = std::string(reinterpret_cast<const char*>(glGetString(GL_VENDOR)));
+        auto renderer = std::string(reinterpret_cast<const char*>(glGetString(GL_RENDERER)));
+        auto version = std::string(reinterpret_cast<const char*>(glGetString(GL_VERSION)));
+        auto shader_version = std::string(reinterpret_cast<const char*>(glGetString(GL_SHADING_LANGUAGE_VERSION)));
+
 		SC_CORE_INFO("Schism succesfully initialized");
-		//SC_CORE_INFO("Gpu - {0} {1}", glGetString(GL_VENDOR), glGetString(GL_RENDERER));
-		//SC_CORE_INFO("Driver - {0}", glGetString(GL_VERSION));
-		//SC_CORE_INFO("Shader Version - {0}", glGetString(GL_SHADING_LANGUAGE_VERSION));
+		SC_CORE_INFO("Gpu - {0} {1}", vendor, renderer);
+		SC_CORE_INFO("Driver - {0}", version);
+		SC_CORE_INFO("Shader Version - {0}", shader_version);
 		SC_CORE_INFO("Processor count - {0}", std::thread::hardware_concurrency());
 
 		// TEMPPPPP !!!
@@ -90,7 +99,7 @@ namespace Schism
 		
 		auto StartTime = std::chrono::high_resolution_clock::now();
 		auto LastFrameTime = StartTime;
-		
+            
 		Timestep ts;
 		while (!glfwWindowShouldClose(winPtr))
 		{
@@ -102,7 +111,16 @@ namespace Schism
 			Renderer::API::Clear();
 			m_Ctx->window->ProcessEvents();
 			m_SceneManager.OnUpdate(ts);
+
+            ImGui_ImplOpenGL3_NewFrame();
+            ImGui_ImplGlfw_NewFrame();
+            ImGui::NewFrame();
+
 			m_SceneManager.OnDraw();
+            
+            ImGui::Render();
+            ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
 			m_Ctx->window->Swap();
 		}
 

@@ -1,11 +1,11 @@
-out/
 .vs/
-cmake-build-release/
-cmake-build-debug/
-cmake-build-release-visual-studio/
-cmake-build-debug-visual-studio/
 .idea/
+bin/
 build/
+cmake-build-*/
 compile_commands.json
 .cache/
-
+out/
+vcpkg_installed
+build/
+CMakeFiles/
